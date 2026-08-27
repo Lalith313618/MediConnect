@@ -1,0 +1,144 @@
+.page-container {
+  padding: 1.5rem;
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.subtitle {
+  color: var(--slate-500);
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.doc-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.doc-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--slate-200);
+}
+
+.doc-email {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  display: block;
+}
+
+.font-semibold {
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.spec-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  background-color: var(--primary-50);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.fee-text {
+  font-weight: 700;
+  color: var(--accent-emerald);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--slate-100);
+  padding-bottom: 0.75rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--slate-400);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--slate-700);
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

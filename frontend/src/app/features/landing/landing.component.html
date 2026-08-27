@@ -1,0 +1,74 @@
+<div class="landing-page">
+  <section class="hero-section">
+    <div class="hero-content">
+      
+      <h1 class="hero-title">Your Health, Simplified & Connected.</h1>
+      <p class="hero-subtitle">
+        Book top-rated specialist doctor appointments in seconds. Real-time availability, hassle-free scheduling, and personalized care dashboards.
+      </p>
+      <div class="hero-actions">
+        <a *ngIf="!authService.isLoggedIn()" routerLink="/register" class="btn btn-primary btn-lg">Book Appointment Now</a>
+
+        <a routerLink="/patient/doctors" class="btn btn-secondary btn-lg">Browse Medical Specialists</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-text">Medical Specialists</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="stat-number">15,000+</span>
+          <span class="stat-text">Happy Patients</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="stat-number">4.9/5</span>
+          <span class="stat-text">Patient Satisfaction</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="./doctor.avif" alt="Hospital Healthcare Professionals" />
+    </div>
+  </section>
+  <section class="specialties-section">
+    <div class="section-header text-center">
+      <h2>Specialized Healthcare Departments</h2>
+      <p>Consult with certified expert physicians across top medical fields.</p>
+    </div>
+
+    <div class="grid-4 mt-4">
+      <div class="specialty-card">
+        <div class="specialty-icon">
+          <span>❤️</span>
+        </div>
+        <h3>Cardiology</h3>
+        <p>Heart care, ECGs & cardiovascular health management.</p>
+      </div>
+
+      <div class="specialty-card">
+        <div class="specialty-icon">
+          <span>🧠</span>
+        </div>
+        <h3>Neurology</h3>
+        <p>Brain, nerve disorders & specialized stroke therapy.</p>
+      </div>
+
+      <div class="specialty-card">
+        <div class="specialty-icon">
+          <span>👶</span>
+        </div>
+        <h3>Pediatrics</h3>
+        <p>Comprehensive child development & immunizations.</p>
+      </div>
+
+      <div class="specialty-card">
+        <div class="specialty-icon">
+          <span>🩺</span>
+        </div>
+        <h3>Dermatology</h3>
+        <p>Skin conditions, acne, and dermatological care.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

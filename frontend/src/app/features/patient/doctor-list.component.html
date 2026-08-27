@@ -1,0 +1,172 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>Find & Book Doctor Visits</h1>
+      <p class="subtitle">Search top certified medical specialists and book instantaneous appointments.</p>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="card filter-card mt-3">
+    <div class="filter-row">
+      <div class="search-input-wrapper">
+        <img src="./doctors.png" alt="Search" class="search-icon" style="width: 18px; height: 18px; object-fit: contain;" />
+        <input
+          type="text"
+          class="form-control search-control"
+          placeholder="Search doctor name or specialization..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange()"
+        />
+      </div>
+
+      <div class="spec-select-wrapper">
+        <select class="form-control" [(ngModel)]="selectedSpecialization" (change)="onSearchChange()">
+          <option *ngFor="let spec of specializations" [value]="spec">
+            {{ spec === 'All' ? 'All Specializations' : spec }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="card text-center py-5 mt-4">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3 text-muted">Loading medical specialists...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && errorMsg" class="card text-center py-4 mt-4 border-danger">
+    <h3 class="text-danger">Failed to Load Doctors</h3>
+    <p class="text-muted mt-2">{{ errorMsg }}</p>
+    <div class="mt-3">
+      <button type="button" class="btn btn-primary" (click)="loadDoctors()">Retry Loading</button>
+    </div>
+  </div>
+
+  <!-- Doctors Grid -->
+  <div class="grid-3 mt-4" *ngIf="!loading && !errorMsg && doctors.length > 0; else noDoctors">
+    <div class="card doctor-card" *ngFor="let doc of doctors">
+      <div class="doctor-header">
+        <img [src]="doc.profileImage || './doctors.png'" [alt]="getDocName(doc)" class="doctor-img" />
+        <div>
+          <span class="spec-pill">{{ doc.specialization }}</span>
+          <h3 class="doc-name">{{ getDocName(doc) }}</h3>
+          <p class="doc-qual">{{ doc.qualification }}</p>
+        </div>
+      </div>
+
+      <div class="doctor-details">
+        <div class="detail-item">
+          <span class="label">Experience:</span>
+          <span class="val">{{ doc.experience }} Years</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Consultation Fee:</span>
+          <span class="val fee">${{ doc.consultationFee }}</span>
+        </div>
+      </div>
+
+      <p class="doc-bio">{{ doc.bio }}</p>
+
+      <div class="card-footer">
+        <button type="button" class="btn btn-primary btn-block" (click)="openBookingModal(doc)">
+          Book Appointment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noDoctors>
+    <div class="card empty-state text-center py-5 mt-4" *ngIf="!loading && !errorMsg">
+      <p class="text-muted font-medium fs-5">No medical specialists found matching your search criteria.</p>
+      <div class="mt-3" *ngIf="searchQuery || (selectedSpecialization && selectedSpecialization !== 'All')">
+        <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+          Clear Search & Reset Filters
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Instant Booking Modal Overlay -->
+  <div class="modal-backdrop" *ngIf="showBookingModal">
+    <div class="modal-card animate-fade-in" *ngIf="selectedDoctor">
+      <div class="modal-header">
+        <h2>Book Appointment</h2>
+        <button type="button" class="close-btn" (click)="closeBookingModal()">&times;</button>
+      </div>
+
+      <!-- Success Screen View -->
+      <div class="modal-body text-center py-4" *ngIf="bookingSuccess">
+        <div class="success-icon">🎉</div>
+        <h3 class="success-title">Appointment Confirmed!</h3>
+        <p class="success-text">
+          Your visit with <strong>{{ getDocName(selectedDoctor) }}</strong> is scheduled for 
+          <strong>{{ bookingDate }}</strong> at <strong>{{ bookingTime }}</strong>.
+        </p>
+        <div class="modal-actions mt-4">
+          <button type="button" class="btn btn-primary" (click)="goToMyAppointments()">View My Appointments</button>
+          <button type="button" class="btn btn-secondary" (click)="closeBookingModal()">Done</button>
+        </div>
+      </div>
+
+      <!-- Booking Form View -->
+      <div class="modal-body" *ngIf="!bookingSuccess">
+        <div class="modal-doctor-summary">
+          <img [src]="selectedDoctor.profileImage || './doctors.png'" [alt]="getDocName(selectedDoctor)" class="modal-doc-img" />
+          <div>
+            <h3>{{ getDocName(selectedDoctor) }}</h3>
+            <span class="spec-pill">{{ selectedDoctor.specialization }}</span>
+            <p class="modal-fee mt-1">Consultation Fee: <strong>${{ selectedDoctor.consultationFee }}</strong></p>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="form-label" for="bookingDate">Select Preferred Date *</label>
+          <input
+            id="bookingDate"
+            type="date"
+            class="form-control"
+            [(ngModel)]="bookingDate"
+            [min]="minDate"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Available Time Slot *</label>
+          <div class="time-slots-grid">
+            <button
+              type="button"
+              *ngFor="let slot of availableSlots"
+              class="slot-btn"
+              [class.active]="bookingTime === slot"
+              (click)="selectTimeSlot(slot)"
+            >
+              {{ slot }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="bookingReason">Reason for Consultation (Optional)</label>
+          <textarea
+            id="bookingReason"
+            class="form-control"
+            rows="3"
+            placeholder="Describe symptoms or reason for your visit..."
+            [(ngModel)]="bookingReason"
+          ></textarea>
+        </div>
+
+        <div class="modal-actions mt-4">
+          <button type="button" class="btn btn-secondary" (click)="closeBookingModal()" [disabled]="bookingLoading">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="confirmBooking()" [disabled]="bookingLoading">
+            <span *ngIf="bookingLoading" class="spinner"></span>
+            {{ bookingLoading ? 'Booking...' : 'Confirm Appointment' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

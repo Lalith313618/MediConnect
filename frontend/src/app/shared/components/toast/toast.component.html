@@ -1,0 +1,12 @@
+<div class="toast-container">
+  <div
+    *ngFor="let toast of (toastService.toasts$ | async)"
+    class="toast-item toast-{{ toast.type }} animate-fade-in"
+  >
+    <div class="toast-body">
+      <div class="toast-title">{{ toast.title }}</div>
+      <div class="toast-message">{{ toast.message }}</div>
+    </div>
+    <button class="toast-close" (click)="toastService.remove(toast.id)">&times;</button>
+  </div>
+</div>

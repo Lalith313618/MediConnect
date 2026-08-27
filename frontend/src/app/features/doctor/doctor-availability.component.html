@@ -1,0 +1,56 @@
+<div class="page-container animate-fade-in" *ngIf="doctor">
+  <div class="page-header">
+    <div>
+      <h1>Manage Working Availability</h1>
+      <p class="subtitle">Configure your active working days and available appointment time slots shown to patients.</p>
+    </div>
+    <button class="btn btn-primary" (click)="saveAvailability()" [disabled]="saving">
+      {{ saving ? 'Saving Changes...' : 'Save Availability Settings' }}
+    </button>
+  </div>
+
+  <div class="days-container mt-4">
+    <div class="card day-card" *ngFor="let d of daysList; let i = index">
+      <div class="day-header">
+        <div class="day-title">
+          <input
+            type="checkbox"
+            [id]="'day-' + d"
+            [checked]="isDayActive(d)"
+            (change)="toggleDay(d, $event)"
+          />
+          <label [for]="'day-' + d" class="day-label">{{ d }}</label>
+        </div>
+        <span class="slots-count" *ngIf="isDayActive(d)">
+          {{ getSlots(d).length }} active slots
+        </span>
+      </div>
+
+      <div *ngIf="isDayActive(d)" class="day-body mt-3">
+        <div class="slots-wrap">
+          <div *ngFor="let slot of getSlots(d); let sIdx = index" class="slot-pill">
+            <span>{{ slot }}</span>
+            <button type="button" class="remove-slot" (click)="removeSlot(d, sIdx)">&times;</button>
+          </div>
+        </div>
+
+        <!-- Add Slot Input -->
+        <div class="add-slot-row mt-3">
+          <input
+            type="text"
+            class="form-control form-control-sm slot-input"
+            placeholder="e.g. 04:00 PM"
+            #newSlotInput
+          />
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            (click)="addSlot(d, newSlotInput.value); newSlotInput.value = ''"
+          >
+            + Add Slot
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

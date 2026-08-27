@@ -1,0 +1,109 @@
+.page-container {
+  padding: 1.5rem;
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.subtitle {
+  color: var(--slate-500);
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 1.25rem;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.py-4 {
+  padding: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--slate-500);
+}
+
+.filter-card {
+  padding: 1rem 1.25rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--slate-600);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.reset-btn-group {
+  flex: 0;
+  min-width: auto;
+}
+
+.patient-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-name {
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.patient-email {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+.date-time-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.date {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--primary-600);
+  font-weight: 700;
+}
+
+.demo-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: var(--slate-600);
+}
+
+.select-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+}

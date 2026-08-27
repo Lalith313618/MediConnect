@@ -1,0 +1,61 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>Patient Records Management</h1>
+      <p class="subtitle">Search, view profile information, or manage registered patients.</p>
+    </div>
+  </div>
+
+  <!-- Search Filter Bar -->
+  <div class="card filter-card mt-3">
+    <div class="search-input-wrapper">
+      <img src="./patients.jpg" alt="Search" class="search-icon" style="width: 18px; height: 18px; object-fit: contain; border-radius: 50%;" />
+      <input
+        type="text"
+        class="form-control search-control"
+        placeholder="Search patient name, email, or phone number..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      />
+    </div>
+  </div>
+
+  <!-- Patients Table Card -->
+  <div class="card p-0 mt-3">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Patient Name</th>
+            <th>Email Address</th>
+            <th>Phone Number</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="loading">
+            <td colspan="6" class="text-center py-4 text-muted">
+              <span class="spinner" style="width: 20px; height: 20px; border: 2px solid var(--primary-600); border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px;"></span>
+              Loading patient records...
+            </td>
+          </tr>
+          <ng-container *ngIf="!loading">
+            <tr *ngFor="let pat of patients">
+              <td class="font-semibold">{{ pat.name }}</td>
+              <td>{{ pat.email }}</td>
+              <td>{{ pat.phone || 'N/A' }}</td>
+              <td>{{ pat.dateOfBirth || 'N/A' }}</td>
+              <td>{{ pat.gender || 'Unspecified' }}</td>
+              <td>{{ pat.address || 'N/A' }}</td>
+            </tr>
+            <tr *ngIf="patients.length === 0">
+              <td colspan="6" class="text-center py-4 text-muted">No patient records found.</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

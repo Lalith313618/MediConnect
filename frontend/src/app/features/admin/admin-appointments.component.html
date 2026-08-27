@@ -1,0 +1,98 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>Global Hospital Appointments</h1>
+      <p class="subtitle">Search, monitor, and override status for all hospital consultation bookings.</p>
+    </div>
+  </div>
+
+  <div class="card filter-card mt-3">
+    <div class="filter-row">
+      <div class="filter-group flex-2">
+        <label class="filter-label">Search Query</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search patient or doctor name..."
+          [(ngModel)]="searchQuery"
+          (input)="loadAppointments()"
+        />
+      </div>
+
+      <div class="filter-group flex-1">
+        <label class="filter-label">Status</label>
+        <select class="form-control" [(ngModel)]="statusFilter" (change)="loadAppointments()">
+          <option value="All">All Statuses</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="filter-group flex-1">
+        <label class="filter-label">Date Filter</label>
+        <input type="date" class="form-control" [(ngModel)]="dateFilter" (change)="loadAppointments()" />
+      </div>
+
+      <div class="filter-group reset-btn-group">
+        <button class="btn btn-secondary btn-sm" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Appointments Table Card -->
+  <div class="card p-0 mt-3">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Assigned Doctor</th>
+            <th>Date & Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Override Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of appointments">
+            <td>
+              <div class="user-cell">
+                <span class="font-semibold">{{ getPatientName(app) }}</span>
+                <span class="sub-text">{{ getPatientEmail(app) }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="user-cell">
+                <span class="font-semibold">{{ getDoctorName(app) }}</span>
+                <span class="spec-pill-sm">{{ getDoctorSpec(app) }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="font-semibold">{{ app.appointmentDate }}</span>
+              <div class="sub-text">⏰ {{ app.appointmentTime }}</div>
+            </td>
+            <td>{{ app.reason }}</td>
+            <td><app-status-badge [status]="app.status"></app-status-badge></td>
+            <td>
+              <select
+                class="form-control select-sm"
+                [ngModel]="app.status"
+                (ngModelChange)="updateStatus(app._id, $event)"
+              >
+                <option value="Scheduled">Scheduled</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </td>
+          </tr>
+          <tr *ngIf="appointments.length === 0">
+            <td colspan="6" class="text-center py-4 text-muted">No appointments found matching search filters.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="dashboard-page animate-fade-in">
+  <div class="welcome-header">
+    <div>
+      <h1>Welcome, {{ authService.currentUserValue?.name }} 👋</h1>
+      <p class="subtitle">Here is your healthcare portal summary and upcoming bookings.</p>
+    </div>
+    <a routerLink="/patient/doctors" class="btn btn-primary">
+      <img src="./appointments.png" alt="Book Visit" class="nav-img-icon" />
+      Book New Visit
+    </a>
+  </div>
+
+  <div class="grid-4 mt-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #e0f2fe; color: #0284c7;">📅</div>
+      <div>
+        <div class="stat-value">{{ upcomingAppointments.length }}</div>
+        <div class="stat-label">Upcoming Visits</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #ecfdf5; color: #059669;">✅</div>
+      <div>
+        <div class="stat-value">{{ completedCount }}</div>
+        <div class="stat-label">Completed Visits</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #fef2f2; color: #dc2626;">❌</div>
+      <div>
+        <div class="stat-value">{{ cancelledCount }}</div>
+        <div class="stat-label">Cancelled Visits</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #f0f9ff; color: #075985;">🩺</div>
+      <div>
+        <div class="stat-value">{{ totalAppointments.length }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container mt-4">
+    <h2 class="section-title">Next Scheduled Appointment</h2>
+    <div *ngIf="nextAppointment; else noUpcoming" class="next-appointment-card card">
+      <div class="doc-info">
+        <img [src]="getDoctorPhoto(nextAppointment)" alt="Doctor" class="doc-avatar" />
+        <div>
+          <h3>{{ getDoctorName(nextAppointment) }}</h3>
+          <p class="doc-spec">{{ getDoctorSpec(nextAppointment) }}</p>
+          <div class="time-badge">
+            🗓️ {{ nextAppointment.appointmentDate }} at {{ nextAppointment.appointmentTime }}
+          </div>
+        </div>
+      </div>
+      <div class="app-actions">
+        <app-status-badge [status]="nextAppointment.status"></app-status-badge>
+        <a routerLink="/patient/appointments" class="btn btn-outline btn-sm">View Full Details</a>
+      </div>
+    </div>
+    <ng-template #noUpcoming>
+      <div class="card empty-state">
+        <p>You have no upcoming scheduled appointments.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="section-container mt-4">
+    <div class="section-header-flex">
+      <h2 class="section-title">Recent Appointment History</h2>
+      <a routerLink="/patient/appointments" class="link-more">View All &rarr;</a>
+    </div>
+
+    <div class="card p-0 mt-2">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Doctor</th>
+              <th>Specialization</th>
+              <th>Date & Time</th>
+              <th>Reason</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let app of totalAppointments.slice(0, 5)">
+              <td class="font-semibold">{{ getDoctorName(app) }}</td>
+              <td>{{ getDoctorSpec(app) }}</td>
+              <td>{{ app.appointmentDate }} ({{ app.appointmentTime }})</td>
+              <td>{{ app.reason }}</td>
+              <td><app-status-badge [status]="app.status"></app-status-badge></td>
+            </tr>
+            <tr *ngIf="totalAppointments.length === 0">
+              <td colspan="5" class="text-center py-4 text-muted">No appointments found yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

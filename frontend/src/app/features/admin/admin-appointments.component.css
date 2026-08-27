@@ -1,0 +1,99 @@
+.page-container {
+  padding: 1.5rem;
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.subtitle {
+  color: var(--slate-500);
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 1.25rem;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.filter-card {
+  padding: 1rem 1.25rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  min-width: 160px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--slate-600);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.reset-btn-group {
+  flex: 0;
+  min-width: auto;
+}
+
+.user-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.font-semibold {
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.sub-text {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+.spec-pill-sm {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--primary-700);
+}
+
+.select-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-4 {
+  padding: 2rem;
+}
+
+.text-muted {
+  color: var(--slate-500);
+}

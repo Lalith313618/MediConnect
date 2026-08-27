@@ -1,0 +1,69 @@
+<aside class="sidebar" [class.open]="isOpen">
+  <div class="sidebar-header">
+    <span class="role-badge">{{ userRole | titlecase }} Workspace</span>
+    <button class="close-btn" (click)="closeSidebar.emit()">&times;</button>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <ng-container *ngIf="userRole === 'patient'">
+      <a routerLink="/patient/dashboard" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./dashboard.png" alt="Dashboard" class="nav-icon" />
+        Dashboard
+      </a>
+      <a routerLink="/patient/doctors" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./doctors.png" alt="Find Doctors" class="nav-icon" />
+        Find Doctors
+      </a>
+      <a routerLink="/patient/appointments" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./appointments.png" alt="My Appointments" class="nav-icon" />
+        My Appointments
+      </a>
+      <a routerLink="/patient/profile" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./profile.png" alt="My Profile" class="nav-icon" />
+        My Profile
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'doctor'">
+      <a routerLink="/doctor/dashboard" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./dashboard.png" alt="Dashboard" class="nav-icon" />
+        Dashboard
+      </a>
+      <a routerLink="/doctor/appointments" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./appointments.png" alt="My Appointments" class="nav-icon" />
+        My Appointments
+      </a>
+      <a routerLink="/doctor/profile" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./profile.png" alt="Doctor Profile" class="nav-icon" />
+        Doctor Profile
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'admin'">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./dashboard.png" alt="Dashboard Overview" class="nav-icon" />
+        Dashboard Overview
+      </a>
+      <a routerLink="/admin/doctors" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./doctors.png" alt="Manage Doctors" class="nav-icon" />
+        Manage Doctors
+      </a>
+      <a routerLink="/admin/patients" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./patients.jpg" alt="Manage Patients" class="nav-icon" />
+        Manage Patients
+      </a>
+      <a routerLink="/admin/appointments" routerLinkActive="active" (click)="closeSidebar.emit()" class="nav-item">
+        <img src="./appointments.png" alt="All Appointments" class="nav-icon" />
+        All Appointments
+      </a>
+    </ng-container>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-link" (click)="authService.logout()">
+      <img src="./logout.png" alt="Logout" class="nav-icon" />
+      Logout Account
+    </button>
+  </div>
+</aside>

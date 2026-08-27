@@ -1,0 +1,92 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>Doctor Master Appointments List</h1>
+      <p class="subtitle">Search, filter, and manage all your scheduled patient consultations.</p>
+    </div>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="card filter-card mt-3">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label class="filter-label">Status Filter</label>
+        <select class="form-control" [(ngModel)]="statusFilter" (change)="loadAppointments()">
+          <option value="All">All Statuses</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Filter by Date</label>
+        <input type="date" class="form-control" [(ngModel)]="dateFilter" (change)="loadAppointments()" />
+      </div>
+
+      <div class="filter-group reset-btn-group">
+        <button class="btn btn-secondary btn-sm" (click)="resetFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appointments Table Card -->
+  <div class="card p-0 mt-3">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Patient Details</th>
+            <th>Date & Time</th>
+            <th>Reason / Notes</th>
+            <th>Patient Demographics</th>
+            <th>Status</th>
+            <th>Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of appointments">
+            <td>
+              <div class="patient-info">
+                <span class="patient-name">{{ getPatientName(app) }}</span>
+                <span class="patient-email">{{ getPatientEmail(app) }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="date-time-box">
+                <span class="date">{{ app.appointmentDate }}</span>
+                <span class="time">{{ app.appointmentTime }}</span>
+              </div>
+            </td>
+            <td>{{ app.reason }}</td>
+            <td>
+              <div class="demo-info">
+                <span>Phone: {{ getPatientPhone(app) }}</span>
+                <span>DOB: {{ getPatientDOB(app) }} ({{ getPatientGender(app) }})</span>
+              </div>
+            </td>
+            <td><app-status-badge [status]="app.status"></app-status-badge></td>
+            <td>
+              <div class="status-select-wrap">
+                <select
+                  class="form-control select-sm"
+                  [ngModel]="app.status"
+                  (ngModelChange)="onStatusChange(app._id, $event)"
+                >
+                  <option value="Scheduled">Scheduled</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="appointments.length === 0">
+            <td colspan="6" class="text-center py-4 text-muted">No appointments found matching current filters.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

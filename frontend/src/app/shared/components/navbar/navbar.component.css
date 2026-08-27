@@ -1,0 +1,124 @@
+.navbar {
+  height: 4rem;
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--slate-600);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-decoration: none;
+}
+.brand-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.025em;
+}
+.brand-accent {
+  color: var(--primary-600);
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.notification-badge {
+  position: relative;
+  padding: 0.5rem;
+  color: var(--slate-600);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+.notification-badge:hover {
+  background: var(--slate-100);
+}
+.pulse-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+}
+.user-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: var(--primary-100);
+  color: var(--primary-700);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.user-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--slate-900);
+}
+.user-role {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+@media (max-width: 768px) {
+  .mobile-toggle {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+}
+
+.nav-img-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+.brand-img {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+}

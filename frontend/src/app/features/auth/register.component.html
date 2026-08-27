@@ -1,0 +1,112 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <div class="auth-header">
+      <h2>Create Patient Account</h2>
+      <p>Join MediConnect for fast & secure doctor consultations</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name *</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          [class.is-invalid]="f['name'].touched && f['name'].errors"
+          formControlName="name"
+          placeholder="e.g. John Doe"
+        />
+        <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
+          <span *ngIf="f['name'].errors['required']">Full name is required.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address *</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          [class.is-invalid]="f['email'].touched && f['email'].errors"
+          formControlName="email"
+          placeholder="name@example.com"
+        />
+        <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+          <span *ngIf="f['email'].errors['required']">Email is required.</span>
+          <span *ngIf="f['email'].errors['email']">Please enter a valid email format.</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="password">Password *</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            [class.is-invalid]="f['password'].touched && f['password'].errors"
+            formControlName="password"
+            placeholder="At least 6 characters"
+          />
+          <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+            <span *ngIf="f['password'].errors['required']">Password is required.</span>
+            <span *ngIf="f['password'].errors['minlength']">Min 6 characters.</span>
+          </div>
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input
+            id="phone"
+            type="tel"
+            class="form-control"
+            formControlName="phone"
+            placeholder="Enter your phone number"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="dateOfBirth">Date of Birth</label>
+          <input
+            id="dateOfBirth"
+            type="date"
+            class="form-control"
+            formControlName="dateOfBirth"
+          />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="gender">Gender</label>
+          <select id="gender" class="form-control" formControlName="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="address">Address</label>
+        <input
+          id="address"
+          type="text"
+          class="form-control"
+          formControlName="address"
+          placeholder="123 Street Name, City, State"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="registerForm.invalid || loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Creating Account...' : 'Register Account' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already registered? <a routerLink="/login">Log in here</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>My Appointments</h1>
+      <p class="subtitle">View upcoming, past, and cancelled medical consultations.</p>
+    </div>
+    <a routerLink="/patient/doctors" class="btn btn-primary">
+      <img src="./appointments.png" alt="Book Visit" class="nav-img-icon" />
+      Book New Visit
+    </a>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="tabs-container mt-3">
+    <button
+      *ngFor="let tab of tabs"
+      class="tab-btn"
+      [class.active]="selectedTab === tab"
+      (click)="setTab(tab)"
+    >
+      {{ tab }}
+    </button>
+  </div>
+
+  <!-- Appointments List Cards -->
+  <div class="appointments-list mt-3" *ngIf="filteredAppointments.length > 0; else emptyState">
+    <div class="card appointment-card" *ngFor="let app of filteredAppointments">
+      <div class="app-main">
+        <img [src]="getDoctorPhoto(app)" alt="Doctor" class="doc-img" />
+        <div class="doc-meta">
+          <span class="spec-pill">{{ getDoctorSpec(app) }}</span>
+          <h3>{{ getDoctorName(app) }}</h3>
+          <div class="date-time-info">
+            🗓️ {{ app.appointmentDate }} &bull; ⏰ {{ app.appointmentTime }}
+          </div>
+          <p class="reason-text"><strong>Reason:</strong> {{ app.reason }}</p>
+        </div>
+      </div>
+
+      <div class="app-status-actions">
+        <app-status-badge [status]="app.status"></app-status-badge>
+
+        <button
+          *ngIf="app.status === 'Scheduled' || app.status === 'Confirmed'"
+          class="btn btn-outline btn-danger-text btn-sm mt-2"
+          (click)="cancelAppointment(app._id)"
+        >
+          Cancel Visit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="card empty-card mt-4">
+      <p>No appointments found under standard filter criteria.</p>
+    </div>
+  </ng-template>
+</div>

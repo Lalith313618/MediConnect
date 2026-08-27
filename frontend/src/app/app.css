@@ -1,0 +1,17 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.app-body {
+  display: flex;
+  flex: 1;
+}
+.main-content {
+  flex: 1;
+  background-color: var(--slate-50);
+  min-height: calc(100vh - 4rem);
+}
+.main-content.full-width {
+  width: 100%;
+}

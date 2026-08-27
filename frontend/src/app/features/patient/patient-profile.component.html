@@ -1,0 +1,64 @@
+<div class="page-container animate-fade-in">
+  <div class="page-header">
+    <div>
+      <h1>My Profile Settings</h1>
+      <p class="subtitle">Update your personal identification, contact details, and login credentials.</p>
+    </div>
+  </div>
+
+  <div class="card profile-card mt-3">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="name">Full Name *</label>
+          <input id="name" type="text" class="form-control" formControlName="name" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input id="phone" type="tel" class="form-control" formControlName="phone" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="email">Login Email Address *</label>
+          <input id="email" type="email" class="form-control" formControlName="email" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="password">New Password (Leave blank to keep current)</label>
+          <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="dateOfBirth">Date of Birth</label>
+          <input id="dateOfBirth" type="date" class="form-control" formControlName="dateOfBirth" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="gender">Gender</label>
+          <select id="gender" class="form-control" formControlName="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="address">Home Address</label>
+        <input id="address" type="text" class="form-control" formControlName="address" />
+      </div>
+
+      <div class="actions mt-4">
+        <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || saving">
+          {{ saving ? 'Saving Changes...' : 'Save Profile Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

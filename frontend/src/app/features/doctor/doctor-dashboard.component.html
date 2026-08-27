@@ -1,0 +1,105 @@
+<div class="dashboard-page animate-fade-in">
+  <div class="welcome-header">
+    <div>
+      <h1>Doctor Control Center</h1>
+      <p class="subtitle">Welcome back, Dr. {{ authService.currentUserValue?.name }}. Here is your schedule summary for today.</p>
+    </div>
+  </div>
+
+  <!-- Quick Metrics Grid -->
+  <div class="grid-4 mt-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #e0f2fe; color: #0284c7;">📌</div>
+      <div>
+        <div class="stat-value">{{ todaysAppointments.length }}</div>
+        <div class="stat-label">Today's Visits</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #f0f9ff; color: #075985;">🗓️</div>
+      <div>
+        <div class="stat-value">{{ totalAppointments.length }}</div>
+        <div class="stat-label">Total Consultations</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #ecfdf5; color: #059669;">✅</div>
+      <div>
+        <div class="stat-value">{{ completedCount }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #fffbeb; color: #d97706;">⌛</div>
+      <div>
+        <div class="stat-value">{{ scheduledCount }}</div>
+        <div class="stat-label">Pending / Confirmed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Patient Queue Table -->
+  <div class="section-container mt-4">
+    <div class="section-header-flex">
+      <h2 class="section-title">Today's Patient Schedule ({{ todayDateStr }})</h2>
+      <a routerLink="/doctor/appointments" class="link-more">View Full Master List &rarr;</a>
+    </div>
+
+    <div class="card p-0 mt-2">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Time Slot</th>
+              <th>Contact Info</th>
+              <th>Reason for Visit</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let app of todaysAppointments">
+              <td class="font-semibold">{{ getPatientName(app) }}</td>
+              <td><span class="time-tag">⏰ {{ app.appointmentTime }}</span></td>
+              <td>{{ getPatientPhone(app) }}</td>
+              <td>{{ app.reason }}</td>
+              <td><app-status-badge [status]="app.status"></app-status-badge></td>
+              <td>
+                <div class="action-buttons">
+                  <button
+                    *ngIf="app.status === 'Scheduled'"
+                    class="btn btn-success btn-sm"
+                    (click)="updateStatus(app._id, 'Confirmed')"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    *ngIf="app.status === 'Scheduled' || app.status === 'Confirmed'"
+                    class="btn btn-primary btn-sm"
+                    (click)="updateStatus(app._id, 'Completed')"
+                  >
+                    Mark Complete
+                  </button>
+                  <button
+                    *ngIf="app.status !== 'Cancelled' && app.status !== 'Completed'"
+                    class="btn btn-secondary btn-sm"
+                    (click)="updateStatus(app._id, 'Cancelled')"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="todaysAppointments.length === 0">
+              <td colspan="6" class="text-center py-4 text-muted">No appointments scheduled for today.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

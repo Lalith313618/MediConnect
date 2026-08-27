@@ -1,0 +1,101 @@
+<div class="page-container animate-fade-in" *ngIf="doctor">
+  <a routerLink="/patient/doctors" class="back-link">&larr; Back to Doctor Listings</a>
+
+  <div class="doctor-profile-grid mt-3">
+    <!-- Doctor Info Sidebar -->
+    <div class="card doc-profile-card">
+      <img [src]="doctor.profileImage" [alt]="getDocName()" class="profile-img" />
+      <span class="spec-badge">{{ doctor.specialization }}</span>
+      <h2>{{ getDocName() }}</h2>
+      <p class="qual">{{ doctor.qualification }}</p>
+
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Experience</span>
+          <span class="meta-val">{{ doctor.experience }} Years</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Consultation Fee</span>
+          <span class="meta-val fee">\${{ doctor.consultationFee }}</span>
+        </div>
+      </div>
+
+      <div class="bio-section">
+        <h4>About Doctor</h4>
+        <p>{{ doctor.bio }}</p>
+      </div>
+    </div>
+
+    <!-- Booking Form Container -->
+    <div class="card booking-card">
+      <h3>Schedule Consultation</h3>
+      <p class="subtitle">Select a date and available time slot to confirm your booking.</p>
+
+      <!-- Date Selector -->
+      <div class="form-group mt-3">
+        <label class="form-label" for="appDate">Select Date *</label>
+        <input
+          id="appDate"
+          type="date"
+          class="form-control"
+          [min]="minDate"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()"
+        />
+      </div>
+
+      <!-- Time Slots Picker -->
+      <div class="form-group mt-3">
+        <label class="form-label">Available Time Slots for {{ selectedDayName }}</label>
+        <div *ngIf="availableTimeSlots.length > 0; else noSlots" class="slots-grid">
+          <button
+            type="button"
+            *ngFor="let slot of availableTimeSlots"
+            class="slot-btn"
+            [class.selected]="selectedTime === slot.time"
+            [class.booked]="slot.isBooked"
+            [disabled]="slot.isBooked"
+            (click)="selectSlot(slot.time)"
+          >
+            {{ slot.time }}
+            <span *ngIf="slot.isBooked" class="booked-lbl">(Booked)</span>
+          </button>
+        </div>
+        <ng-template #noSlots>
+          <div class="no-slots-alert">
+            No working hours or slots configured for Dr. {{ getDocName() }} on {{ selectedDayName }}. Please select another date.
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Reason for Visit -->
+      <div class="form-group mt-3">
+        <label class="form-label" for="reason">Reason for Visit (Optional)</label>
+        <textarea
+          id="reason"
+          rows="3"
+          class="form-control"
+          placeholder="e.g. Routine checkup, joint pain consultation, fever symptoms..."
+          [(ngModel)]="reason"
+        ></textarea>
+      </div>
+
+      <!-- Confirmation Summary & Submit Button -->
+      <div class="booking-summary mt-4" *ngIf="selectedTime">
+        <h4>Booking Summary</h4>
+        <p><strong>Doctor:</strong> {{ getDocName() }} ({{ doctor.specialization }})</p>
+        <p><strong>Date & Time:</strong> {{ selectedDate }} at {{ selectedTime }}</p>
+        <p><strong>Fee:</strong> \${{ doctor.consultationFee }}</p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-block btn-lg mt-4"
+        [disabled]="!selectedDate || !selectedTime || submitting"
+        (click)="bookAppointment()"
+      >
+        {{ submitting ? 'Confirming Appointment...' : 'Confirm Appointment' }}
+      </button>
+    </div>
+  </div>
+</div>
