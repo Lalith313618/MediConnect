@@ -5,29 +5,41 @@ const getDashboardStats = async (req, res) => {
   try {
     const todayStr = new Date().toISOString().split('T')[0];
 
-    const totalPatients = await User.countDocuments({ role: 'patient' });
-    const totalDoctors = await Doctor.countDocuments();
-    const totalAppointments = await Appointment.countDocuments();
-
-    const todaysAppointments = await Appointment.countDocuments({ appointmentDate: todayStr });
-    const completedAppointments = await Appointment.countDocuments({ status: 'Completed' });
-    const cancelledAppointments = await Appointment.countDocuments({ status: 'Cancelled' });
-    const scheduledAppointments = await Appointment.countDocuments({ status: 'Scheduled' });
-    const confirmedAppointments = await Appointment.countDocuments({ status: 'Confirmed' });
-
-    const recentAppointments = await Appointment.find()
-      .populate('patientId', 'name email phone')
-      .populate({
-        path: 'doctorId',
-        populate: { path: 'userId', select: 'name specialization' }
-      })
-      .sort({ createdAt: -1 })
-      .limit(6);
-
-    const recentPatients = await User.find({ role: 'patient' })
-      .select('-password')
-      .sort({ createdAt: -1 })
-      .limit(5);
+    const [
+      totalPatients,
+      totalDoctors,
+      totalAppointments,
+      todaysAppointments,
+      completedAppointments,
+      cancelledAppointments,
+      scheduledAppointments,
+      confirmedAppointments,
+      recentAppointments,
+      recentPatients
+    ] = await Promise.all([
+      User.countDocuments({ role: 'patient' }),
+      Doctor.countDocuments(),
+      Appointment.countDocuments(),
+      Appointment.countDocuments({ appointmentDate: todayStr }),
+      Appointment.countDocuments({ status: 'Completed' }),
+      Appointment.countDocuments({ status: 'Cancelled' }),
+      Appointment.countDocuments({ status: 'Scheduled' }),
+      Appointment.countDocuments({ status: 'Confirmed' }),
+      Appointment.find()
+        .populate('patientId', 'name email phone')
+        .populate({
+          path: 'doctorId',
+          populate: { path: 'userId', select: 'name specialization' }
+        })
+        .sort({ createdAt: -1 })
+        .limit(6)
+        .lean(),
+      User.find({ role: 'patient' })
+        .select('-password')
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean()
+    ]);
 
     res.json({
       stats: {
@@ -57,7 +69,7 @@ const getPatients = async (req, res) => {
       query.$or = [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }];
     }
 
-    const patients = await User.find(query).select('-password').sort({ createdAt: -1 });
+    const patients = await User.find(query).select('-password').sort({ createdAt: -1 }).lean();
     res.json(patients);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -65,7 +77,7 @@ const getPatients = async (req, res) => {
 };
 const getAdminDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find().populate('userId', 'name email phone role address').sort({ createdAt: -1 });
+    const doctors = await Doctor.find().populate('userId', 'name email phone role address').sort({ createdAt: -1 }).lean();
     res.json(doctors);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -87,7 +99,8 @@ const getAdminAppointments = async (req, res) => {
         path: 'doctorId',
         populate: { path: 'userId', select: 'name email phone' }
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     if (search) {
       const regex = new RegExp(search, 'i');

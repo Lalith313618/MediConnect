@@ -61,7 +61,7 @@ const getAppointments = async (req, res) => {
     if (req.user.role === 'patient') {
       query.patientId = req.user._id;
     } else if (req.user.role === 'doctor') {
-      const doctorProfile = await Doctor.findOne({ userId: req.user._id });
+      const doctorProfile = await Doctor.findOne({ userId: req.user._id }).select('_id').lean();
       if (doctorProfile) {
         query.doctorId = doctorProfile._id;
       } else {
@@ -86,7 +86,8 @@ const getAppointments = async (req, res) => {
         path: 'doctorId',
         populate: { path: 'userId', select: 'name email phone' }
       })
-      .sort({ appointmentDate: 1, appointmentTime: 1 });
+      .sort({ appointmentDate: 1, appointmentTime: 1 })
+      .lean();
 
     res.json(appointments);
   } catch (error) {

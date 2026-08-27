@@ -52,4 +52,7 @@ const doctorSchema = new mongoose.Schema(
   }
 );
 
+doctorSchema.index({ userId: 1 });
+doctorSchema.index({ specialization: 1 });
+
 module.exports = mongoose.model('Doctor', doctorSchema);

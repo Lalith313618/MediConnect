@@ -10,7 +10,7 @@ const getDoctors = async (req, res) => {
       query.specialization = { $regex: specialization.trim(), $options: 'i' };
     }
 
-    let doctors = await Doctor.find(query).populate('userId', 'name email phone role address');
+    let doctors = await Doctor.find(query).populate('userId', 'name email phone role address').lean();
 
     if (search && search.trim() !== '') {
       const searchRegex = new RegExp(search.trim(), 'i');
