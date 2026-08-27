@@ -24,7 +24,10 @@ export interface DashboardStats {
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:5000/api/admin';
+  private get apiUrl(): string {
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    return isLocal ? 'http://localhost:5000/api/admin' : '/api/admin';
+  }
 
   constructor(private http: HttpClient) {}
 

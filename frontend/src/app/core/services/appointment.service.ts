@@ -7,7 +7,10 @@ import { Appointment } from '../models/appointment.model';
   providedIn: 'root'
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:5000/api/appointments';
+  private get apiUrl(): string {
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    return isLocal ? 'http://localhost:5000/api/appointments' : '/api/appointments';
+  }
   private appointmentUpdatedSource = new Subject<void>();
   public appointmentUpdated$ = this.appointmentUpdatedSource.asObservable();
 

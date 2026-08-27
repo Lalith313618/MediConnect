@@ -7,7 +7,10 @@ import { Doctor, DayAvailability } from '../models/doctor.model';
   providedIn: 'root'
 })
 export class DoctorService {
-  private apiUrl = 'http://localhost:5000/api/doctors';
+  private get apiUrl(): string {
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    return isLocal ? 'http://localhost:5000/api/doctors' : '/api/doctors';
+  }
 
   constructor(private http: HttpClient) {}
 
