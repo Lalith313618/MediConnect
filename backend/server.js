@@ -53,6 +53,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'MediConnect Backend is healthy' });
 });
 
+app.get('/api/seed', async (req, res) => {
+  try {
+    await seedData();
+    res.json({ message: 'Database seeded successfully with sample accounts and data!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Seeding failed', error: error.message });
+  }
+});
+
 // Error handling middleware
 app.use(errorHandler);
 
