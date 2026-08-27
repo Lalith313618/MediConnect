@@ -28,5 +28,24 @@
   justify-content: flex-end;
 }
 @media (max-width: 600px) {
-  .form-row { flex-direction: column; gap: 0; }
+  .page-container {
+    padding: 1rem 0.75rem;
+  }
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  .profile-card {
+    padding: 1.25rem 1rem;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions .btn {
+    width: 100%;
+  }
 }
+

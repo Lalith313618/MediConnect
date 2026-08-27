@@ -3,6 +3,12 @@
   <app-navbar (toggleSidebar)="isSidebarOpen = !isSidebarOpen"></app-navbar>
 
   <div class="app-body">
+    <div
+      class="sidebar-backdrop"
+      *ngIf="isSidebarOpen && showSidebar()"
+      (click)="isSidebarOpen = false"
+    ></div>
+
     <app-sidebar
       *ngIf="showSidebar() && (authService.currentUser$ | async) as user"
       [isOpen]="isSidebarOpen"

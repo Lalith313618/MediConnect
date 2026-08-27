@@ -103,12 +103,47 @@
   font-size: 0.75rem;
   color: var(--slate-500);
 }
+.mobile-toggle {
+  display: none;
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  color: var(--slate-700);
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.mobile-toggle:hover {
+  background: var(--slate-200);
+  color: var(--slate-900);
+}
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
   .mobile-toggle {
-    display: block;
+    display: inline-flex;
   }
   .desktop-only {
     display: none;
+  }
+  .navbar-right {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.75rem;
+  }
+  .brand-name {
+    font-size: 1.05rem;
+  }
+  .navbar-right .btn-sm {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -122,3 +157,4 @@
   height: 1.5rem;
   object-fit: contain;
 }
+

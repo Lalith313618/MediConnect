@@ -57,8 +57,20 @@
   to { transform: rotate(360deg); }
 }
 @media (max-width: 600px) {
+  .auth-container {
+    padding: 1rem 0.75rem;
+    align-items: flex-start;
+  }
+  .auth-card {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-md);
+  }
+  .auth-header h2 {
+    font-size: 1.5rem;
+  }
   .form-row {
     flex-direction: column;
     gap: 0;
   }
 }
+

@@ -96,13 +96,43 @@
   color: var(--slate-500);
 }
 @media (max-width: 640px) {
+  .dashboard-page {
+    padding: 1rem 0.75rem;
+  }
+  .welcome-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .welcome-header h1 {
+    font-size: 1.5rem;
+  }
+  .welcome-header .btn {
+    width: 100%;
+  }
   .next-appointment-card {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+  .doc-info {
+    flex-direction: row;
+    align-items: center;
   }
   .app-actions {
     align-items: flex-start;
     width: 100%;
   }
+  .app-actions .btn {
+    width: 100%;
+  }
 }
+
+@media (max-width: 440px) {
+  .doc-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+

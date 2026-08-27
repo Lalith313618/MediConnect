@@ -335,6 +335,15 @@ a:hover {
   gap: 1.25rem;
 }
 
+/* Touch Targets & Mobile Form Enhancements */
+button, input, select, textarea, .btn {
+  touch-action: manipulation;
+}
+
+.btn {
+  min-height: 2.5rem;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -353,4 +362,33 @@ a:hover {
   vertical-align: middle;
   flex-shrink: 0;
 }
+
+/* Global Mobile Media Queries */
+@media (max-width: 768px) {
+  /* Prevent iOS Safari input auto-zoom */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea,
+  .form-control {
+    font-size: 16px !important;
+  }
+
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1.125rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+}
+
 
