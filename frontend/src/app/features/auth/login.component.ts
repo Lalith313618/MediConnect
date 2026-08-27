@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -22,7 +22,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -45,11 +46,12 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
-
   onSubmit(): void {
     if (this.loginForm.invalid) return;
 
     this.loading = true;
+    this.cdr.detectChanges();
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         this.loading = false;
@@ -58,7 +60,9 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.toastService.error(err.error?.message || 'Login failed. Please check credentials.');
+        this.loginForm.patchValue({ password: '' });
+        this.toastService.error(err.error?.message || 'Invalid email or password. Please try entering your credentials again.');
+        this.cdr.detectChanges();
       }
     });
   }

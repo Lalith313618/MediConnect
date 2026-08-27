@@ -21,7 +21,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      const isAuthRoute = req.url.includes('/api/auth/login') || req.url.includes('/api/auth/register');
+      if (error.status === 401 && !isAuthRoute) {
         toastService.error(error.error?.message || 'Session expired or unauthorized. Please log in again.');
         authService.logout();
       } else if (error.status === 403) {
