@@ -38,6 +38,13 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  selectedRole: 'patient' | 'doctor' | 'admin' = 'patient';
+
+  selectRole(role: 'patient' | 'doctor' | 'admin'): void {
+    this.selectedRole = role;
+    // Selection only changes role highlight; email and password are NOT pre-filled.
+  }
+
   get f() {
     return this.loginForm.controls;
   }
