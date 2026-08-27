@@ -5,16 +5,7 @@
       <p>Log in to access your MediConnect account</p>
     </div>
 
-    <div class="demo-box">
-      <span class="demo-title">Choose Login Type:</span>
-      <div class="demo-buttons">
-        <button type="button" class="btn btn-secondary btn-sm" (click)="fillDemo('patient')">Patient</button>
-        <button type="button" class="btn btn-secondary btn-sm" (click)="fillDemo('doctor')">Doctor</button>
-        <button type="button" class="btn btn-secondary btn-sm" (click)="fillDemo('admin')">Admin</button>
-      </div>
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-group">
         <label class="form-label" for="email">Email Address</label>
         <input

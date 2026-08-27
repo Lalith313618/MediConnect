@@ -25,26 +25,6 @@
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
-.demo-box {
-  background-color: var(--primary-50);
-  border: 1px dashed var(--primary-500);
-  padding: 0.875rem;
-  border-radius: var(--radius-md);
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-.demo-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--primary-700);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.demo-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
 .btn-block {
   width: 100%;
   padding: 0.75rem;

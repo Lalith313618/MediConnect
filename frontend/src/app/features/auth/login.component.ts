@@ -42,15 +42,6 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
-  fillDemo(role: 'patient' | 'doctor' | 'admin'): void {
-    if (role === 'patient') {
-      this.loginForm.patchValue({ email: 'john.doe@mediconnect.com', password: 'Patient@123' });
-    } else if (role === 'doctor') {
-      this.loginForm.patchValue({ email: 'dr.jenkins@mediconnect.com', password: 'Doctor@123' });
-    } else if (role === 'admin') {
-      this.loginForm.patchValue({ email: 'admin@mediconnect.com', password: 'Admin@123' });
-    }
-  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) return;
