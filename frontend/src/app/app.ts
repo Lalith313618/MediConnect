@@ -17,12 +17,13 @@ import { filter } from 'rxjs';
 export class AppComponent {
   title = 'MediConnect';
   isSidebarOpen = false;
-  currentUrl = '';
+  currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
 
   constructor(
     public authService: AuthService,
     private router: Router
   ) {
+    this.updateUrl();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -30,10 +31,19 @@ export class AppComponent {
     });
   }
 
+  private updateUrl(): void {
+    if (this.router.url && this.router.url !== '/') {
+      this.currentUrl = this.router.url;
+    } else if (typeof window !== 'undefined' && window.location.pathname) {
+      this.currentUrl = window.location.pathname;
+    }
+  }
+
   showSidebar(): boolean {
     if (!this.authService.isLoggedIn()) return false;
-    const url = (this.currentUrl || '').split('?')[0];
-    if (url === '/' || url === '' || url === '/login' || url === '/register') {
+    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    const url = path.split('?')[0];
+    if (url === '/' || url === '/login' || url === '/register') {
       return false;
     }
     return true;

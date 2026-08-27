@@ -13,12 +13,13 @@ import { filter } from 'rxjs';
 })
 export class NavbarComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
-  currentUrl = '';
+  currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
 
   constructor(
     public authService: AuthService,
     private router: Router
   ) {
+    this.updateUrl();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -26,18 +27,35 @@ export class NavbarComponent {
     });
   }
 
+  private updateUrl(): void {
+    if (this.router.url && this.router.url !== '/') {
+      this.currentUrl = this.router.url;
+    } else if (typeof window !== 'undefined' && window.location.pathname) {
+      this.currentUrl = window.location.pathname;
+    }
+  }
+
   isLandingPage(): boolean {
-    const url = (this.currentUrl || '').split('?')[0];
-    return url === '/' || url === '';
+    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    const url = path.split('?')[0];
+    return url === '/';
   }
 
   isAuthPage(): boolean {
-    const url = (this.currentUrl || '').split('?')[0];
+    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    const url = path.split('?')[0];
     return url === '/login' || url === '/register';
   }
 
   isDashboardPage(): boolean {
-    const url = (this.currentUrl || '').split('?')[0];
-    return url.startsWith('/patient') || url.startsWith('/doctor') || url.startsWith('/admin');
+    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    const url = path.split('?')[0];
+    if (url.startsWith('/patient') || url.startsWith('/doctor') || url.startsWith('/admin')) {
+      return true;
+    }
+    if (this.authService.isLoggedIn() && url !== '/' && url !== '/login' && url !== '/register') {
+      return true;
+    }
+    return false;
   }
 }

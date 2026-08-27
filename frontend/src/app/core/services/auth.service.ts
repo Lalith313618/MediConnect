@@ -17,9 +17,14 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {
     const savedUser = localStorage.getItem('mediconnect_user');
+    const savedToken = localStorage.getItem('mediconnect_token');
     if (savedUser) {
       try {
-        this.currentUserSubject.next(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        if (!savedToken && parsedUser.token) {
+          localStorage.setItem('mediconnect_token', parsedUser.token);
+        }
+        this.currentUserSubject.next(parsedUser);
       } catch (e) {
         localStorage.removeItem('mediconnect_user');
         localStorage.removeItem('mediconnect_token');
@@ -32,7 +37,9 @@ export class AuthService {
   }
 
   public get token(): string | null {
-    return localStorage.getItem('mediconnect_token');
+    const t = localStorage.getItem('mediconnect_token');
+    if (t) return t;
+    return this.currentUserValue?.token || null;
   }
 
   register(userData: any): Observable<AuthResponse> {
