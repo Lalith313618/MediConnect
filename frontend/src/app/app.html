@@ -4,13 +4,13 @@
 
   <div class="app-body">
     <app-sidebar
-      *ngIf="authService.isLoggedIn() && (authService.currentUser$ | async) as user"
+      *ngIf="showSidebar() && (authService.currentUser$ | async) as user"
       [isOpen]="isSidebarOpen"
       [userRole]="user.role"
       (closeSidebar)="isSidebarOpen = false"
     ></app-sidebar>
 
-    <main class="main-content" [class.full-width]="!authService.isLoggedIn()">
+    <main class="main-content" [class.full-width]="!showSidebar()">
       <router-outlet></router-outlet>
     </main>
   </div>
