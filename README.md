@@ -27,11 +27,4 @@ MediConnect is a full-stack Hospital Appointment System that helps patients easi
 - JWT
 - Postman
 
-## 🚀 How to Run
 
-### Backend
-
-```bash
-cd backend
-npm install
-npm run dev
