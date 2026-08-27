@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { User } from '../models/user.model';
 import { Doctor } from '../models/doctor.model';
 import { Appointment } from '../models/appointment.model';
@@ -29,27 +29,83 @@ export class AdminService {
     return isLocal ? 'http://localhost:5000/api/admin' : '/api/admin';
   }
 
+  private cache = {
+    stats: null as DashboardStats | null,
+    doctors: null as Doctor[] | null,
+    patientsMap: new Map<string, User[]>(),
+    appointmentsMap: new Map<string, Appointment[]>()
+  };
+
   constructor(private http: HttpClient) {}
 
-  getDashboardStats(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard`);
+  clearCache(): void {
+    this.cache.stats = null;
+    this.cache.doctors = null;
+    this.cache.patientsMap.clear();
+    this.cache.appointmentsMap.clear();
   }
 
-  getPatients(search?: string): Observable<User[]> {
+  getDashboardStats(forceRefresh = false): Observable<DashboardStats> {
+    if (this.cache.stats && !forceRefresh) {
+      this.http.get<DashboardStats>(`${this.apiUrl}/dashboard`).subscribe({
+        next: (data) => (this.cache.stats = data)
+      });
+      return of(this.cache.stats);
+    }
+    return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard`).pipe(
+      tap((data) => (this.cache.stats = data))
+    );
+  }
+
+  getPatients(search?: string, forceRefresh = false): Observable<User[]> {
+    const key = search || '__all__';
+    if (this.cache.patientsMap.has(key) && !forceRefresh) {
+      let params = new HttpParams();
+      if (search) params = params.set('search', search);
+      this.http.get<User[]>(`${this.apiUrl}/patients`, { params }).subscribe({
+        next: (data) => this.cache.patientsMap.set(key, data)
+      });
+      return of(this.cache.patientsMap.get(key)!);
+    }
+
     let params = new HttpParams();
     if (search) params = params.set('search', search);
-    return this.http.get<User[]>(`${this.apiUrl}/patients`, { params });
+    return this.http.get<User[]>(`${this.apiUrl}/patients`, { params }).pipe(
+      tap((data) => this.cache.patientsMap.set(key, data))
+    );
   }
 
-  getDoctors(): Observable<Doctor[]> {
-    return this.http.get<Doctor[]>(`${this.apiUrl}/doctors`);
+  getDoctors(forceRefresh = false): Observable<Doctor[]> {
+    if (this.cache.doctors && !forceRefresh) {
+      this.http.get<Doctor[]>(`${this.apiUrl}/doctors`).subscribe({
+        next: (data) => (this.cache.doctors = data)
+      });
+      return of(this.cache.doctors);
+    }
+    return this.http.get<Doctor[]>(`${this.apiUrl}/doctors`).pipe(
+      tap((data) => (this.cache.doctors = data))
+    );
   }
 
-  getAppointments(filters?: { status?: string; date?: string; search?: string }): Observable<Appointment[]> {
+  getAppointments(filters?: { status?: string; date?: string; search?: string }, forceRefresh = false): Observable<Appointment[]> {
+    const key = JSON.stringify(filters || {});
+    if (this.cache.appointmentsMap.has(key) && !forceRefresh) {
+      let params = new HttpParams();
+      if (filters?.status) params = params.set('status', filters.status);
+      if (filters?.date) params = params.set('date', filters.date);
+      if (filters?.search) params = params.set('search', filters.search);
+      this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params }).subscribe({
+        next: (data) => this.cache.appointmentsMap.set(key, data)
+      });
+      return of(this.cache.appointmentsMap.get(key)!);
+    }
+
     let params = new HttpParams();
     if (filters?.status) params = params.set('status', filters.status);
     if (filters?.date) params = params.set('date', filters.date);
     if (filters?.search) params = params.set('search', filters.search);
-    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params });
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params }).pipe(
+      tap((data) => this.cache.appointmentsMap.set(key, data))
+    );
   }
 }
