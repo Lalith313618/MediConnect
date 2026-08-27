@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +13,21 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class NavbarComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
+  currentUrl = '';
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private router: Router
+  ) {
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.currentUrl = event.urlAfterRedirects || event.url;
+    });
+  }
+
+  isLandingPage(): boolean {
+    const url = (this.currentUrl || '').split('?')[0];
+    return url === '/' || url === '' || url === '/login' || url === '/register';
+  }
 }

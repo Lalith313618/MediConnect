@@ -26,10 +26,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.redirectByRole(this.authService.currentUserValue?.role);
-    }
-
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
     this.loginForm = this.fb.group({

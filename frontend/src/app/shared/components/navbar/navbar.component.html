@@ -1,6 +1,5 @@
 <header class="navbar">
   <div class="navbar-left">
-
     <a routerLink="/" class="brand">
       <div class="brand-icon">
         <img src="./logo.jpg" alt="MediConnect" class="brand-img" />
@@ -10,26 +9,32 @@
   </div>
   
   <div class="navbar-right" *ngIf="authService.currentUser$ | async as user; else guestNav">
-    <div class="notification-badge" title="Notifications">
-      <img src="./notification.png" alt="Notifications" class="nav-img-icon" />
-      <span class="pulse-dot"></span>
-    </div>
-
-    <div class="user-profile-menu">
-      <div class="avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
-      <div class="user-info desktop-only">
-        <span class="user-name">{{ user.name }}</span>
-        <span class="user-role">{{ user.role | titlecase }}</span>
+    <ng-container *ngIf="!isLandingPage(); else guestNavContent">
+      <div class="notification-badge" title="Notifications">
+        <img src="./notification.png" alt="Notifications" class="nav-img-icon" />
+        <span class="pulse-dot"></span>
       </div>
-    </div>
 
-    <button class="btn btn-secondary btn-sm" (click)="authService.logout()" title="Logout">
-      <img src="./logout.png" alt="Logout" class="nav-img-icon" />
-      <span class="desktop-only">Logout</span>
-    </button>
+      <div class="user-profile-menu">
+        <div class="avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
+        <div class="user-info desktop-only">
+          <span class="user-name">{{ user.name }}</span>
+          <span class="user-role">{{ user.role | titlecase }}</span>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary btn-sm" (click)="authService.logout()" title="Logout">
+        <img src="./logout.png" alt="Logout" class="nav-img-icon" />
+        <span class="desktop-only">Logout</span>
+      </button>
+    </ng-container>
   </div>
 
   <ng-template #guestNav>
+    <ng-container *ngTemplateOutlet="guestNavContent"></ng-container>
+  </ng-template>
+
+  <ng-template #guestNavContent>
     <div class="navbar-right">
       <a routerLink="/" class="btn btn-secondary btn-sm">
         <img src="./home.jpg" alt="Home" class="nav-img-icon" />

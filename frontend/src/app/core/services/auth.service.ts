@@ -82,7 +82,7 @@ export class AuthService {
     localStorage.removeItem('mediconnect_token');
     localStorage.removeItem('mediconnect_user');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   private handleAuthResponse(res: AuthResponse): void {
