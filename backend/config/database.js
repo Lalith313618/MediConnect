@@ -24,15 +24,25 @@ const connectDB = async () => {
       connectTimeoutMS: 15000,
     };
 
-    const uri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mediconnect';
+    const rawUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    
+    if (process.env.VERCEL && (!rawUri || rawUri.includes('127.0.0.1') || rawUri.includes('localhost'))) {
+      const err = new Error('MONGODB_URI environment variable is missing or set to localhost in Vercel. Please add your MongoDB Atlas connection string to Vercel Environment Variables and redeploy.');
+      console.error(err.message);
+      throw err;
+    }
+
+    const uri = rawUri || 'mongodb://127.0.0.1:27017/mediconnect';
+    const sanitizedUri = uri.replace(/\/\/(.*):(.*)@/, '//***:***@');
+    console.log(`Attempting MongoDB connection to: ${sanitizedUri}`);
 
     cached.promise = mongoose.connect(uri, opts).then((mongooseInstance) => {
-      console.log(`MongoDB Connected: ${mongooseInstance.connection.host}`);
+      console.log(`MongoDB Connected successfully: ${mongooseInstance.connection.host}`);
       return mongooseInstance;
     }).catch((err) => {
       cached.promise = null;
-      console.error(`MongoDB Connection Error: ${err.message}`);
-      throw err;
+      console.error(`MongoDB Connection Failed (${sanitizedUri}): ${err.message}`);
+      throw new Error(`MongoDB Connection Error (${err.message})`);
     });
   }
 
