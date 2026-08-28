@@ -36,11 +36,18 @@ app.use(async (req, res, next) => {
 
 // API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/doctors', require('./routes/doctorRoutes'));
-app.use('/api/appointments', require('./routes/appointmentRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/auth', require('./routes/authRoutes'));
 
-// Root endpoint
+app.use('/api/doctors', require('./routes/doctorRoutes'));
+app.use('/doctors', require('./routes/doctorRoutes'));
+
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/appointments', require('./routes/appointmentRoutes'));
+
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/admin', require('./routes/adminRoutes'));
+
+// Root & Health endpoints
 app.get('/', (req, res) => {
   res.json({
     message: 'MediConnect API Server Running Smoothly',
@@ -53,7 +60,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'MediConnect Backend is healthy' });
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'MediConnect Backend is healthy' });
+});
+
 app.get('/api/seed', async (req, res) => {
+  try {
+    await seedData();
+    res.json({ message: 'Database seeded successfully with sample accounts and data!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Seeding failed', error: error.message });
+  }
+});
+
+app.get('/seed', async (req, res) => {
   try {
     await seedData();
     res.json({ message: 'Database seeded successfully with sample accounts and data!' });
