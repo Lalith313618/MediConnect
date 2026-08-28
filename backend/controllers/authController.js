@@ -84,7 +84,7 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
@@ -94,6 +94,16 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     if (user && (await user.matchPassword(password))) {
+      if (role && user.role !== role) {
+        const formattedUserRole = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        const formattedRequestedRole = role.charAt(0).toUpperCase() + role.slice(1);
+        const userArticle = ['a', 'e', 'i', 'o', 'u'].includes(user.role[0].toLowerCase()) ? 'an' : 'a';
+        const requestedArticle = ['a', 'e', 'i', 'o', 'u'].includes(role[0].toLowerCase()) ? 'an' : 'a';
+        return res.status(401).json({
+          message: `Access denied. This account is registered as ${userArticle} ${formattedUserRole}, not ${requestedArticle} ${formattedRequestedRole}. Please select the ${formattedUserRole} login tab.`
+        });
+      }
+
       res.json({
         _id: user._id,
         name: user.name,

@@ -1,13 +1,16 @@
 .navbar {
   height: 4rem;
+  width: 100%;
   background: #ffffff;
   border-bottom: 1px solid var(--slate-200);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 }
 .navbar-left {

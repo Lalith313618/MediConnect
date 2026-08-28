@@ -52,7 +52,12 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.cdr.detectChanges();
 
-    this.authService.login(this.loginForm.value).subscribe({
+    const credentials = {
+      ...this.loginForm.value,
+      role: this.selectedRole
+    };
+
+    this.authService.login(credentials).subscribe({
       next: (res) => {
         this.loading = false;
         this.toastService.success(`Welcome back, ${res.name}!`);
@@ -61,7 +66,10 @@ export class LoginComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         this.loginForm.patchValue({ password: '' });
-        this.toastService.error(err.error?.message || 'Invalid email or password. Please try entering your credentials again.');
+        const errorMessage = err.status === 0
+          ? 'Unable to connect to the backend server. Please make sure the backend server is running on port 5000.'
+          : (err.error?.message || 'Invalid email or password. Please try entering your credentials again.');
+        this.toastService.error(errorMessage);
         this.cdr.detectChanges();
       }
     });

@@ -70,7 +70,7 @@
 
       <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid || loading">
         <span *ngIf="loading" class="spinner"></span>
-        {{ loading ? 'Signing in...' : 'Sign In' }}
+        {{ loading ? 'Signing in...' : ('Sign In as ' + (selectedRole | titlecase)) }}
       </button>
     </form>
 
