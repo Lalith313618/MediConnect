@@ -26,7 +26,7 @@ app.use(async (req, res, next) => {
   } catch (error) {
     console.error('Database connection middleware error:', error.message);
     res.status(500).json({
-      message: 'Database connection failed. Please check MONGODB_URI environment variable or local MongoDB service.',
+      message: `Database connection failed: ${error.message}`,
       error: error.message
     });
   }
