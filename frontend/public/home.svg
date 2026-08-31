@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Chimney -->
+  <path 
+    d="M 345 130 V 55 C 345 42 355 32 368 32 C 381 32 391 42 391 55 V 172" 
+    stroke="#334155" 
+    stroke-width="36" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  <!-- Roof, walls, and doorway -->
+  <path 
+    d="M 50 245 L 256 50 L 462 245 M 100 200 V 412 C 100 442 125 467 155 467 H 195 C 210 467 222 455 222 440 V 355 C 222 320 237 305 256 305 C 275 305 290 320 290 355 V 440 C 290 455 302 467 317 467 H 357 C 387 467 412 442 412 412 V 200" 
+    stroke="#334155" 
+    stroke-width="36" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+</svg>

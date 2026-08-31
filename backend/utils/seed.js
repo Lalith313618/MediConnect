@@ -27,18 +27,6 @@ const seedData = async () => {
       gender: 'Male',
       address: '742 Evergreen Terrace, Healthcare Plaza, Suite 400'
     });
-
-    const patientUser = await User.create({
-      name: 'John Doe',
-      email: 'john.doe@mediconnect.com',
-      password: 'Patient@123',
-      role: 'patient',
-      phone: '9834637263',
-      dateOfBirth: '1990-08-15',
-      gender: 'Male',
-      address: '123 Health Ave, Suite 101, New York, NY'
-    });
-
     const doctorUsersData = [
       {
         name: 'Dr. Sarah Jenkins',
@@ -126,7 +114,6 @@ const seedData = async () => {
     console.log('Seeding completed successfully!');
     console.log('\n--- Credentials Summary ---');
     console.log('ADMIN: admin@mediconnect.com / Admin@123');
-    console.log('PATIENT: john.doe@mediconnect.com / Patient@123');
     console.log('DOCTOR: dr.jenkins@mediconnect.com / Doctor@123');
 
     if (require.main === module) {

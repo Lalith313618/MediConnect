@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- 3 horizontal rounded bars stacked vertically -->
+  <line x1="80" y1="130" x2="432" y2="130" stroke="#334155" stroke-width="48" stroke-linecap="round" />
+  <line x1="80" y1="256" x2="432" y2="256" stroke="#334155" stroke-width="48" stroke-linecap="round" />
+  <line x1="80" y1="382" x2="432" y2="382" stroke="#334155" stroke-width="48" stroke-linecap="round" />
+</svg>

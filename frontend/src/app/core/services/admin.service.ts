@@ -24,9 +24,25 @@ export interface DashboardStats {
   providedIn: 'root'
 })
 export class AdminService {
+
   private get apiUrl(): string {
-    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-    return isLocal ? 'http://localhost:5000/api/admin' : '/api/admin';
+    if (typeof window !== 'undefined') {
+
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+
+      // Local development
+      // PC:     http://localhost:4200
+      // Mobile: http://192.168.1.144:4200
+      //
+      // In both cases, connect to backend on port 5000.
+      if (port === '4200') {
+        return `${window.location.protocol}//${hostname}:5000/api/admin`;
+      }
+    }
+
+    // Production / deployed version
+    return '/api/admin';
   }
 
   private cache = {
@@ -36,7 +52,7 @@ export class AdminService {
     appointmentsMap: new Map<string, Appointment[]>()
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   clearCache(): void {
     this.cache.stats = null;
@@ -45,67 +61,228 @@ export class AdminService {
     this.cache.appointmentsMap.clear();
   }
 
-  getDashboardStats(forceRefresh = false): Observable<DashboardStats> {
+  getDashboardStats(
+    forceRefresh = false
+  ): Observable<DashboardStats> {
+
     if (this.cache.stats && !forceRefresh) {
-      this.http.get<DashboardStats>(`${this.apiUrl}/dashboard`).subscribe({
-        next: (data) => (this.cache.stats = data)
-      });
+
+      this.http
+        .get<DashboardStats>(
+          `${this.apiUrl}/dashboard`
+        )
+        .subscribe({
+          next: (data) => {
+            this.cache.stats = data;
+          }
+        });
+
       return of(this.cache.stats);
     }
-    return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard`).pipe(
-      tap((data) => (this.cache.stats = data))
-    );
+
+    return this.http
+      .get<DashboardStats>(
+        `${this.apiUrl}/dashboard`
+      )
+      .pipe(
+        tap((data) => {
+          this.cache.stats = data;
+        })
+      );
   }
 
-  getPatients(search?: string, forceRefresh = false): Observable<User[]> {
+  getPatients(
+    search?: string,
+    forceRefresh = false
+  ): Observable<User[]> {
+
     const key = search || '__all__';
-    if (this.cache.patientsMap.has(key) && !forceRefresh) {
+
+    if (
+      this.cache.patientsMap.has(key) &&
+      !forceRefresh
+    ) {
+
       let params = new HttpParams();
-      if (search) params = params.set('search', search);
-      this.http.get<User[]>(`${this.apiUrl}/patients`, { params }).subscribe({
-        next: (data) => this.cache.patientsMap.set(key, data)
-      });
-      return of(this.cache.patientsMap.get(key)!);
+
+      if (search) {
+        params = params.set(
+          'search',
+          search
+        );
+      }
+
+      this.http
+        .get<User[]>(
+          `${this.apiUrl}/patients`,
+          { params }
+        )
+        .subscribe({
+          next: (data) => {
+            this.cache.patientsMap.set(
+              key,
+              data
+            );
+          }
+        });
+
+      return of(
+        this.cache.patientsMap.get(key)!
+      );
     }
 
     let params = new HttpParams();
-    if (search) params = params.set('search', search);
-    return this.http.get<User[]>(`${this.apiUrl}/patients`, { params }).pipe(
-      tap((data) => this.cache.patientsMap.set(key, data))
-    );
+
+    if (search) {
+      params = params.set(
+        'search',
+        search
+      );
+    }
+
+    return this.http
+      .get<User[]>(
+        `${this.apiUrl}/patients`,
+        { params }
+      )
+      .pipe(
+        tap((data) => {
+          this.cache.patientsMap.set(
+            key,
+            data
+          );
+        })
+      );
   }
 
-  getDoctors(forceRefresh = false): Observable<Doctor[]> {
-    if (this.cache.doctors && !forceRefresh) {
-      this.http.get<Doctor[]>(`${this.apiUrl}/doctors`).subscribe({
-        next: (data) => (this.cache.doctors = data)
-      });
+  getDoctors(
+    forceRefresh = false
+  ): Observable<Doctor[]> {
+
+    if (
+      this.cache.doctors &&
+      !forceRefresh
+    ) {
+
+      this.http
+        .get<Doctor[]>(
+          `${this.apiUrl}/doctors`
+        )
+        .subscribe({
+          next: (data) => {
+            this.cache.doctors = data;
+          }
+        });
+
       return of(this.cache.doctors);
     }
-    return this.http.get<Doctor[]>(`${this.apiUrl}/doctors`).pipe(
-      tap((data) => (this.cache.doctors = data))
-    );
+
+    return this.http
+      .get<Doctor[]>(
+        `${this.apiUrl}/doctors`
+      )
+      .pipe(
+        tap((data) => {
+          this.cache.doctors = data;
+        })
+      );
   }
 
-  getAppointments(filters?: { status?: string; date?: string; search?: string }, forceRefresh = false): Observable<Appointment[]> {
-    const key = JSON.stringify(filters || {});
-    if (this.cache.appointmentsMap.has(key) && !forceRefresh) {
+  getAppointments(
+    filters?: {
+      status?: string;
+      date?: string;
+      search?: string;
+    },
+    forceRefresh = false
+  ): Observable<Appointment[]> {
+
+    const key = JSON.stringify(
+      filters || {}
+    );
+
+    if (
+      this.cache.appointmentsMap.has(key) &&
+      !forceRefresh
+    ) {
+
       let params = new HttpParams();
-      if (filters?.status) params = params.set('status', filters.status);
-      if (filters?.date) params = params.set('date', filters.date);
-      if (filters?.search) params = params.set('search', filters.search);
-      this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params }).subscribe({
-        next: (data) => this.cache.appointmentsMap.set(key, data)
-      });
-      return of(this.cache.appointmentsMap.get(key)!);
+
+      if (filters?.status) {
+        params = params.set(
+          'status',
+          filters.status
+        );
+      }
+
+      if (filters?.date) {
+        params = params.set(
+          'date',
+          filters.date
+        );
+      }
+
+      if (filters?.search) {
+        params = params.set(
+          'search',
+          filters.search
+        );
+      }
+
+      this.http
+        .get<Appointment[]>(
+          `${this.apiUrl}/appointments`,
+          { params }
+        )
+        .subscribe({
+          next: (data) => {
+            this.cache.appointmentsMap.set(
+              key,
+              data
+            );
+          }
+        });
+
+      return of(
+        this.cache.appointmentsMap.get(key)!
+      );
     }
 
     let params = new HttpParams();
-    if (filters?.status) params = params.set('status', filters.status);
-    if (filters?.date) params = params.set('date', filters.date);
-    if (filters?.search) params = params.set('search', filters.search);
-    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params }).pipe(
-      tap((data) => this.cache.appointmentsMap.set(key, data))
-    );
+
+    if (filters?.status) {
+      params = params.set(
+        'status',
+        filters.status
+      );
+    }
+
+    if (filters?.date) {
+      params = params.set(
+        'date',
+        filters.date
+      );
+    }
+
+    if (filters?.search) {
+      params = params.set(
+        'search',
+        filters.search
+      );
+    }
+
+    return this.http
+      .get<Appointment[]>(
+        `${this.apiUrl}/appointments`,
+        { params }
+      )
+      .pipe(
+        tap((data) => {
+          this.cache.appointmentsMap.set(
+            key,
+            data
+          );
+        })
+      );
   }
 }

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Top Pegs/Rings -->
+  <rect x="105" y="15" width="34" height="75" rx="17" fill="#334155" />
+  <rect x="325" y="15" width="34" height="75" rx="17" fill="#334155" />
+  
+  <!-- Calendar Header Bar -->
+  <path 
+    d="M 45 110 C 45 85 65 65 90 65 H 374 C 399 65 419 85 419 110 V 210 H 45 Z" 
+    fill="#334155" 
+  />
+  
+  <!-- Calendar Lower Outer Frame -->
+  <path 
+    d="M 45 210 V 375 C 45 400 65 420 90 420 H 240" 
+    stroke="#334155" 
+    stroke-width="32" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  <path 
+    d="M 419 210 V 230" 
+    stroke="#334155" 
+    stroke-width="32" 
+    stroke-linecap="round" 
+  />
+
+  <!-- Grid Squares in Calendar -->
+  <rect x="100" y="240" width="52" height="52" rx="10" fill="#334155" />
+  <rect x="180" y="240" width="52" height="52" rx="10" fill="#334155" />
+  <rect x="260" y="240" width="52" height="52" rx="10" fill="#334155" />
+
+  <rect x="100" y="320" width="52" height="52" rx="10" fill="#334155" />
+  <rect x="180" y="320" width="52" height="52" rx="10" fill="#334155" />
+
+  <!-- Overlapping Clock (Bottom Right) -->
+  <circle cx="365" cy="365" r="115" fill="#ffffff" stroke="#334155" stroke-width="36" />
+  <path 
+    d="M 365 295 V 365 H 425" 
+    stroke="#334155" 
+    stroke-width="36" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+  />
+</svg>
