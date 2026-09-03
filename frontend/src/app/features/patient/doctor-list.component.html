@@ -49,7 +49,7 @@
   <div class="grid-3 mt-4" *ngIf="!loading && !errorMsg && doctors.length > 0; else noDoctors">
     <div class="card doctor-card" *ngFor="let doc of doctors">
       <div class="doctor-header">
-        <img [src]="doc.profileImage || './doctors.png'" [alt]="getDocName(doc)" class="doctor-img" />
+        <img [src]="doc.profileImage || './doctors.png'" (error)="$any($event.target).src='./doctors.png'" [alt]="getDocName(doc)" class="doctor-img" />
         <div>
           <span class="spec-pill">{{ doc.specialization }}</span>
           <h3 class="doc-name">{{ getDocName(doc) }}</h3>
@@ -64,7 +64,7 @@
         </div>
         <div class="detail-item">
           <span class="label">Consultation Fee:</span>
-          <span class="val fee">${{ doc.consultationFee }}</span>
+          <span class="val fee">₹{{ doc.consultationFee }}</span>
         </div>
       </div>
 
@@ -114,11 +114,11 @@
       <!-- Booking Form View -->
       <div class="modal-body" *ngIf="!bookingSuccess">
         <div class="modal-doctor-summary">
-          <img [src]="selectedDoctor.profileImage || './doctors.png'" [alt]="getDocName(selectedDoctor)" class="modal-doc-img" />
+          <img [src]="selectedDoctor.profileImage || './doctors.png'" (error)="$any($event.target).src='./doctors.png'" [alt]="getDocName(selectedDoctor)" class="modal-doc-img" />
           <div>
             <h3>{{ getDocName(selectedDoctor) }}</h3>
             <span class="spec-pill">{{ selectedDoctor.specialization }}</span>
-            <p class="modal-fee mt-1">Consultation Fee: <strong>${{ selectedDoctor.consultationFee }}</strong></p>
+            <p class="modal-fee mt-1">Consultation Fee: <strong>₹{{ selectedDoctor.consultationFee }}</strong></p>
           </div>
         </div>
 

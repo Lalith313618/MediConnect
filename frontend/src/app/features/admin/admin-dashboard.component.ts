@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AdminService, DashboardStats } from '../../core/services/admin.service';
 import { DoctorService } from '../../core/services/doctor.service';
@@ -14,7 +14,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, StatusBadgeComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule, StatusBadgeComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -30,6 +30,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   doctorForm!: FormGroup;
   submitting = false;
   private appSub?: Subscription;
+
+  rawImageSource: string | null = null;
+  zoomLevel = 100;
+  offsetX = 0;
+  offsetY = 0;
+  showImageAdjuster = false;
 
   constructor(
     private adminService: AdminService,
@@ -67,7 +73,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       specialization: ['', [Validators.required]],
       qualification: ['MBBS, MD'],
       experience: [5],
-      consultationFee: [150],
+      consultationFee: [500],
+      profileImage: [''],
       bio: ['']
     });
   }
@@ -75,7 +82,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   loadDashboard(): void {
     this.loading = true;
     this.error = null;
-    this.adminService.getDashboardStats().subscribe({
+    this.adminService.getDashboardStats(true).subscribe({
       next: (res) => {
         this.data = res;
         this.loading = false;
@@ -91,7 +98,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   loadDoctors(): void {
-    this.doctorService.getDoctors().subscribe({
+    this.doctorService.getDoctors(undefined, undefined, true).subscribe({
       next: (res) => {
         this.doctors = res || [];
         this.cdr.detectChanges();
@@ -103,6 +110,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   openAddModal(): void {
     this.isEditMode = false;
     this.selectedDoctorId = null;
+    this.rawImageSource = null;
+    this.zoomLevel = 100;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.showImageAdjuster = false;
     this.initForm();
     this.showModal = true;
   }
@@ -110,14 +122,122 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   openEditModal(doc: Doctor): void {
     this.isEditMode = true;
     this.selectedDoctorId = doc._id;
+    this.rawImageSource = doc.profileImage || null;
+    this.zoomLevel = 100;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.showImageAdjuster = !!doc.profileImage;
     this.doctorForm = this.fb.group({
       specialization: [doc.specialization, [Validators.required]],
       qualification: [doc.qualification || 'MBBS, MD'],
       experience: [doc.experience || 5],
-      consultationFee: [doc.consultationFee || 150],
+      consultationFee: [doc.consultationFee || 500],
+      profileImage: [doc.profileImage || ''],
       bio: [doc.bio || '']
     });
     this.showModal = true;
+  }
+
+  imageUrlInput = '';
+
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+      const file = target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.rawImageSource = e.target.result as string;
+        this.imageUrlInput = '';
+        this.zoomLevel = 100;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.showImageAdjuster = true;
+        this.renderAdjustedImage();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onUrlInput(url: string): void {
+    this.imageUrlInput = url;
+    if (url && url.trim().length > 5) {
+      this.rawImageSource = url.trim();
+      this.showImageAdjuster = true;
+      this.renderAdjustedImage();
+    } else if (!url) {
+      this.clearImage();
+    }
+  }
+
+  onAdjustmentChange(): void {
+    this.renderAdjustedImage();
+  }
+
+  resetAdjustments(): void {
+    this.zoomLevel = 100;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.renderAdjustedImage();
+  }
+
+  clearImage(): void {
+    this.rawImageSource = null;
+    this.imageUrlInput = '';
+    this.showImageAdjuster = false;
+    this.zoomLevel = 100;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.doctorForm.patchValue({ profileImage: '' });
+  }
+
+  renderAdjustedImage(): void {
+    if (!this.rawImageSource) return;
+
+    const img = new Image();
+    if (this.rawImageSource.startsWith('http://') || this.rawImageSource.startsWith('https://')) {
+      img.crossOrigin = 'anonymous';
+    }
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const targetSize = 400;
+      canvas.width = targetSize;
+      canvas.height = targetSize;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const baseScale = Math.max(targetSize / img.width, targetSize / img.height);
+      const zoomMultiplier = this.zoomLevel / 100;
+      const finalScale = baseScale * zoomMultiplier;
+
+      const drawWidth = img.width * finalScale;
+      const drawHeight = img.height * finalScale;
+
+      const baseDrawX = (targetSize - drawWidth) / 2;
+      const baseDrawY = (targetSize - drawHeight) / 2;
+
+      const shiftX = (this.offsetX / 100) * (drawWidth / 2);
+      const shiftY = (this.offsetY / 100) * (drawHeight / 2);
+
+      const finalX = baseDrawX + shiftX;
+      const finalY = baseDrawY + shiftY;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, targetSize, targetSize);
+      ctx.drawImage(img, finalX, finalY, drawWidth, drawHeight);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      this.doctorForm.patchValue({ profileImage: dataUrl });
+      this.cdr.detectChanges();
+    };
+    img.onerror = () => {
+      this.doctorForm.patchValue({ profileImage: this.rawImageSource });
+      this.cdr.detectChanges();
+    };
+    img.src = this.rawImageSource;
+  }
+
+  onImgError(event: Event): void {
+    (event.target as HTMLImageElement).src = './doctors.png';
   }
 
   closeModal(): void {

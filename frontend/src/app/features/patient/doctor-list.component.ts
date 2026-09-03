@@ -88,7 +88,7 @@ export class DoctorListComponent implements OnInit {
 
     const backendQuery = this.searchQuery ? this.searchQuery.trim() : '';
 
-    this.doctorService.getDoctors(specParam, backendQuery).subscribe({
+    this.doctorService.getDoctors(specParam, backendQuery, true).subscribe({
       next: (data) => {
         this.loading = false;
         const fetchedDocs = data || [];

@@ -25,8 +25,23 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
-    // Default allowed role for self-registration is patient (unless specifically admin creation)
+    // Allowed roles for registration
     const userRole = role && ['patient', 'doctor'].includes(role) ? role : 'patient';
+
+    if (userRole === 'doctor') {
+      const accessCode = req.body.doctorAccessCode || req.body.accessCode;
+      const REQUIRED_CODE = process.env.DOCTOR_ACCESS_CODE || 'Mediconnectdoctor1';
+
+      if (!accessCode || accessCode.trim() !== REQUIRED_CODE) {
+        return res.status(403).json({
+          message: 'Invalid Doctor Access Code. Registration as a doctor requires a valid access code provided by Hospital Administration.'
+        });
+      }
+
+      if (!req.body.specialization) {
+        return res.status(400).json({ message: 'Specialization is required for Doctor registration' });
+      }
+    }
 
     const user = await User.create({
       name,
@@ -51,12 +66,12 @@ const registerUser = async (req, res) => {
 
         await Doctor.create({
           userId: user._id,
-          specialization: req.body.specialization || 'General Medicine',
-          qualification: req.body.qualification || 'MBBS',
-          experience: req.body.experience || 1,
-          consultationFee: req.body.consultationFee || 100,
-          profileImage: req.body.profileImage || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80',
-          bio: req.body.bio || 'Medical professional providing healthcare services.',
+          specialization: req.body.specialization.trim(),
+          qualification: req.body.qualification || 'MBBS, MD',
+          experience: req.body.experience !== undefined ? Number(req.body.experience) : 5,
+          consultationFee: req.body.consultationFee !== undefined ? Number(req.body.consultationFee) : 500,
+          profileImage: req.body.profileImage || '',
+          bio: req.body.bio || 'Medical professional providing healthcare services on MediConnect.',
           availability: defaultAvailability
         });
       }

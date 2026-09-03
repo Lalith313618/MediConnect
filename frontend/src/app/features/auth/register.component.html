@@ -1,11 +1,33 @@
 <div class="auth-container">
   <div class="auth-card card">
     <div class="auth-header">
-      <h2>Create Patient Account</h2>
-      <p>Join MediConnect for fast & secure doctor consultations</p>
+      <h2>Create {{ selectedRole === 'doctor' ? 'Doctor' : 'Patient' }} Account</h2>
+      <p>Join MediConnect for fast, secure medical consultations & profile management</p>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="demo-box" style="margin-bottom: 20px;">
+      <span class="demo-title">Select Account Type:</span>
+      <div class="demo-buttons">
+        <button
+          type="button"
+          class="btn btn-sm"
+          [ngClass]="selectedRole === 'patient' ? 'btn-primary' : 'btn-secondary'"
+          (click)="selectRole('patient')"
+        >
+          Patient Account
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm"
+          [ngClass]="selectedRole === 'doctor' ? 'btn-primary' : 'btn-secondary'"
+          (click)="selectRole('doctor')"
+        >
+          Doctor Account
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-group">
         <label class="form-label" for="name">Full Name *</label>
         <input
@@ -14,7 +36,7 @@
           class="form-control"
           [class.is-invalid]="f['name'].touched && f['name'].errors"
           formControlName="name"
-          placeholder="e.g. John Doe"
+          [placeholder]="selectedRole === 'doctor' ? 'Dr. Jane Smith' : 'e.g. John Doe'"
         />
         <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
           <span *ngIf="f['name'].errors['required']">Full name is required.</span>
@@ -66,42 +88,194 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group flex-1">
-          <label class="form-label" for="dateOfBirth">Date of Birth</label>
+      <!-- Patient Specific Fields -->
+      <ng-container *ngIf="selectedRole === 'patient'">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label" for="dateOfBirth">Date of Birth</label>
+            <input
+              id="dateOfBirth"
+              type="date"
+              class="form-control"
+              formControlName="dateOfBirth"
+            />
+          </div>
+
+          <div class="form-group flex-1">
+            <label class="form-label" for="gender">Gender</label>
+            <select id="gender" class="form-control" formControlName="gender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="address">Address</label>
           <input
-            id="dateOfBirth"
-            type="date"
+            id="address"
+            type="text"
             class="form-control"
-            formControlName="dateOfBirth"
+            formControlName="address"
+            placeholder="123 Street Name, City, State"
           />
         </div>
+      </ng-container>
 
-        <div class="form-group flex-1">
-          <label class="form-label" for="gender">Gender</label>
-          <select id="gender" class="form-control" formControlName="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+      <!-- Doctor Specific Fields -->
+      <ng-container *ngIf="selectedRole === 'doctor'">
+        <div class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+          <label class="form-label" for="doctorAccessCode" style="color: #1e40af; font-weight: 600;">
+            🔒 Doctor Access Code *
+          </label>
+          <input
+            id="doctorAccessCode"
+            type="password"
+            class="form-control"
+            [class.is-invalid]="f['doctorAccessCode']?.touched && f['doctorAccessCode']?.errors"
+            formControlName="doctorAccessCode"
+            placeholder="Enter Doctor Authorization Code"
+            style="background: #ffffff;"
+          />
+          <small class="text-muted" style="display: block; margin-top: 4px; font-size: 12px; color: #1e3a8a;">
+            Authorization code provided by hospital administration is required for doctor registration.
+          </small>
+          <div *ngIf="f['doctorAccessCode']?.touched && f['doctorAccessCode']?.errors" class="invalid-feedback">
+            Doctor Access Code is required.
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-label" for="address">Address</label>
-        <input
-          id="address"
-          type="text"
-          class="form-control"
-          formControlName="address"
-          placeholder="123 Street Name, City, State"
-        />
-      </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label" for="specialization">Medical Specialization *</label>
+            <input
+              id="specialization"
+              type="text"
+              class="form-control"
+              [class.is-invalid]="f['specialization']?.touched && f['specialization']?.errors"
+              formControlName="specialization"
+              placeholder="Cardiology, Dermatology, etc."
+            />
+            <div *ngIf="f['specialization']?.touched && f['specialization']?.errors" class="invalid-feedback">
+              Specialization is required.
+            </div>
+          </div>
 
-      <button type="submit" class="btn btn-primary btn-block" [disabled]="registerForm.invalid || loading">
+          <div class="form-group flex-1">
+            <label class="form-label" for="qualification">Qualifications & Degrees</label>
+            <input
+              id="qualification"
+              type="text"
+              class="form-control"
+              formControlName="qualification"
+              placeholder="MBBS, MD, MS"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label" for="experience">Years of Experience</label>
+            <input
+              id="experience"
+              type="number"
+              class="form-control"
+              formControlName="experience"
+            />
+          </div>
+
+          <div class="form-group flex-1">
+            <label class="form-label" for="consultationFee">Consultation Fee (₹)</label>
+            <input
+              id="consultationFee"
+              type="number"
+              class="form-control"
+              formControlName="consultationFee"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="bio">Professional Summary / Bio</label>
+          <textarea
+            id="bio"
+            rows="2"
+            class="form-control"
+            formControlName="bio"
+            placeholder="Brief description of clinical expertise & background..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Profile Image & Adjustment Controls (Optional)</label>
+          <div class="image-upload-wrapper" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <div style="display: flex; gap: 14px; align-items: center;">
+              <div class="image-preview" style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: #e2e8f0; border: 2px solid #0284c7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <img [src]="registerForm.get('profileImage')?.value || './doctors.png'" (error)="onImgError($event)" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;" />
+              </div>
+              <div style="flex: 1;">
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="imageUrlInput"
+                  (input)="onUrlInput($any($event.target).value)"
+                  placeholder="Paste image URL (e.g. https://...)"
+                  style="margin-bottom: 6px; font-size: 13px;"
+                />
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer; padding: 4px 10px; font-size: 12px;">
+                    📷 Choose Image File
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;" />
+                  </label>
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px;" *ngIf="rawImageSource" (click)="showImageAdjuster = !showImageAdjuster">
+                    ⚙️ {{ showImageAdjuster ? 'Hide Adjuster' : 'Adjust Framing / Zoom' }}
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px; color: #ef4444; border-color: #fca5a5;" *ngIf="registerForm.get('profileImage')?.value" (click)="clearImage()">
+                    Clear Image
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Collapsible Image Adjuster Controls -->
+            <div class="image-adjuster-panel mt-3" *ngIf="showImageAdjuster && rawImageSource" style="background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 12px; color: #334155;">📐 Adjust Photo Framing, Zoom & Alignment:</span>
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 2px 8px;" (click)="resetAdjustments()">Center & Reset</button>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                  <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                    Zoom / Scale: <strong>{{ zoomLevel }}%</strong>
+                  </label>
+                  <input type="range" min="100" max="300" step="5" [(ngModel)]="zoomLevel" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+                </div>
+
+                <div>
+                  <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                    Horizontal Position (X): <strong>{{ offsetX }}</strong>
+                  </label>
+                  <input type="range" min="-50" max="50" step="1" [(ngModel)]="offsetX" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+                </div>
+              </div>
+
+              <div style="margin-top: 8px;">
+                <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                  Vertical Position (Y): <strong>{{ offsetY }}</strong>
+                </label>
+                <input type="range" min="-50" max="50" step="1" [(ngModel)]="offsetY" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <button type="submit" class="btn btn-primary btn-block mt-3" [disabled]="registerForm.invalid || loading">
         <span *ngIf="loading" class="spinner"></span>
-        {{ loading ? 'Creating Account...' : 'Register Account' }}
+        {{ loading ? 'Registering Account...' : ('Register as ' + (selectedRole | titlecase)) }}
       </button>
     </form>
 

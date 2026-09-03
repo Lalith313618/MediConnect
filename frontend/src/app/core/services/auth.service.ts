@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User, AuthResponse } from '../models/user.model';
 import { Router } from '@angular/router';
+import { DoctorService } from './doctor.service';
+import { AdminService } from './admin.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,17 +17,11 @@ export class AuthService {
       const hostname = window.location.hostname;
       const port = window.location.port;
 
-      // Local development:
-      // PC:     http://localhost:4200
-      // Mobile: http://192.168.1.144:4200
-      //
-      // In both cases connect to the backend on port 5000.
       if (port === '4200') {
         return `${window.location.protocol}//${hostname}:5000/api/auth`;
       }
     }
 
-    // Production / deployed version
     return '/api/auth';
   }
 
@@ -34,7 +30,9 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private doctorService: DoctorService,
+    private adminService: AdminService
   ) {
     const savedUser = localStorage.getItem('mediconnect_user');
     const savedToken = localStorage.getItem('mediconnect_token');
@@ -168,9 +166,11 @@ export class AuthService {
   }
 
   logout(): void {
-
     localStorage.removeItem('mediconnect_token');
     localStorage.removeItem('mediconnect_user');
+
+    this.doctorService.clearCache();
+    this.adminService.clearCache();
 
     this.currentUserSubject.next(null);
 
@@ -178,9 +178,10 @@ export class AuthService {
   }
 
   private handleAuthResponse(res: AuthResponse): void {
+    this.doctorService.clearCache();
+    this.adminService.clearCache();
 
     if (res && res.token) {
-
       // Save token
       localStorage.setItem(
         'mediconnect_token',

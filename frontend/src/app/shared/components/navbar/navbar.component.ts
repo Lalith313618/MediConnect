@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -13,47 +13,39 @@ import { filter } from 'rxjs';
 })
 export class NavbarComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
-  currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
 
   constructor(
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
-    this.updateUrl();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.currentUrl = event.urlAfterRedirects || event.url;
+    ).subscribe(() => {
+      this.cdr.detectChanges();
     });
   }
 
-  private updateUrl(): void {
-    if (this.router.url && this.router.url !== '/') {
-      this.currentUrl = this.router.url;
-    } else if (typeof window !== 'undefined' && window.location.pathname) {
-      this.currentUrl = window.location.pathname;
-    }
+  get currentPath(): string {
+    const raw = this.router.url || (typeof window !== 'undefined' ? window.location.pathname : '');
+    return raw.split('?')[0];
   }
 
   isLandingPage(): boolean {
-    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
-    const url = path.split('?')[0];
-    return url === '/';
+    return this.currentPath === '/';
   }
 
   isAuthPage(): boolean {
-    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
-    const url = path.split('?')[0];
-    return url === '/login' || url === '/register';
+    const path = this.currentPath;
+    return path === '/login' || path === '/register';
   }
 
   isDashboardPage(): boolean {
-    const path = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
-    const url = path.split('?')[0];
-    if (url.startsWith('/patient') || url.startsWith('/doctor') || url.startsWith('/admin')) {
+    const path = this.currentPath;
+    if (path.startsWith('/patient') || path.startsWith('/doctor') || path.startsWith('/admin')) {
       return true;
     }
-    if (this.authService.isLoggedIn() && url !== '/' && url !== '/login' && url !== '/register') {
+    if (this.authService.isLoggedIn() && path !== '/' && path !== '/login' && path !== '/register') {
       return true;
     }
     return false;

@@ -39,7 +39,7 @@ const doctorSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80'
+      default: ''
     },
     bio: {
       type: String,

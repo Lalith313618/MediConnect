@@ -69,7 +69,7 @@ const getDoctorById = async (req, res) => {
           qualification: 'MBBS',
           experience: 1,
           consultationFee: 100,
-          profileImage: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80',
+          profileImage: '',
           bio: 'Medical professional registered on MediConnect.',
           availability: defaultAvailability
         });
@@ -138,7 +138,7 @@ const createDoctor = async (req, res) => {
       qualification: qualification || 'MBBS, MD',
       experience: experience || 5,
       consultationFee: consultationFee || 500,
-      profileImage: profileImage || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80',
+      profileImage: profileImage || '',
       bio: bio || 'Dedicated medical professional providing modern quality healthcare.',
       availability: availability || defaultAvailability
     });
@@ -196,7 +196,9 @@ const updateDoctor = async (req, res) => {
     doctor.qualification = req.body.qualification || doctor.qualification;
     doctor.experience = req.body.experience !== undefined ? req.body.experience : doctor.experience;
     doctor.consultationFee = req.body.consultationFee !== undefined ? req.body.consultationFee : doctor.consultationFee;
-    doctor.profileImage = req.body.profileImage || doctor.profileImage;
+    if (req.body.profileImage !== undefined) {
+      doctor.profileImage = req.body.profileImage;
+    }
     doctor.bio = req.body.bio || doctor.bio;
 
     if (req.body.availability) {

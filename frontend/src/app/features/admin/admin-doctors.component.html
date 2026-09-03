@@ -19,7 +19,7 @@
             <th>Specialization</th>
             <th>Qualifications</th>
             <th>Experience</th>
-            <th>Fee ($)</th>
+            <th>Fee (₹)</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -34,7 +34,7 @@
             <tr *ngFor="let doc of doctors">
               <td>
                 <div class="doc-cell">
-                  <img [src]="doc.profileImage || './doctors.png'" [alt]="getDocName(doc)" class="doc-avatar" />
+                  <img [src]="doc.profileImage || './doctors.png'" (error)="onImgError($event)" [alt]="getDocName(doc)" class="doc-avatar" />
                   <div>
                     <span class="font-semibold">{{ getDocName(doc) }}</span>
                     <span class="doc-email">{{ getDocEmail(doc) }}</span>
@@ -44,7 +44,7 @@
               <td><span class="spec-pill">{{ doc.specialization }}</span></td>
               <td>{{ doc.qualification }}</td>
               <td>{{ doc.experience }} Yrs</td>
-              <td class="fee-text">${{ doc.consultationFee }}</td>
+              <td class="fee-text">₹{{ doc.consultationFee }}</td>
               <td>
                 <div class="action-buttons">
                   <button type="button" class="btn btn-secondary btn-sm" (click)="openEditModal(doc)">Edit</button>
@@ -143,7 +143,7 @@
             <input id="experience" type="number" class="form-control" formControlName="experience" />
           </div>
           <div class="form-group flex-1">
-            <label class="form-label" for="consultationFee">Fee ($)</label>
+            <label class="form-label" for="consultationFee">Fee (₹)</label>
             <input id="consultationFee" type="number" class="form-control" formControlName="consultationFee" />
           </div>
         </div>
@@ -151,6 +151,73 @@
         <div class="form-group">
           <label class="form-label" for="bio">Bio</label>
           <textarea id="bio" rows="2" class="form-control" formControlName="bio"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Profile Image & Adjustment Controls</label>
+          <div class="image-upload-wrapper" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <div style="display: flex; gap: 14px; align-items: center;">
+              <div class="image-preview" style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: #e2e8f0; border: 2px solid #0284c7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <img [src]="doctorForm.get('profileImage')?.value || './doctors.png'" (error)="onImgError($event)" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;" />
+              </div>
+              <div style="flex: 1;">
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="imageUrlInput"
+                  (input)="onUrlInput($any($event.target).value)"
+                  placeholder="Paste image URL (e.g., https://...)"
+                  style="margin-bottom: 6px; font-size: 13px;"
+                />
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer; padding: 4px 10px; font-size: 12px;">
+                    📷 Choose Image File
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;" />
+                  </label>
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px;" *ngIf="rawImageSource" (click)="showImageAdjuster = !showImageAdjuster">
+                    ⚙️ {{ showImageAdjuster ? 'Hide Adjuster' : 'Adjust Framing / Zoom' }}
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px; color: #ef4444; border-color: #fca5a5;" *ngIf="doctorForm.get('profileImage')?.value" (click)="clearImage()">
+                    Clear Image
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Collapsible Image Adjuster Controls -->
+            <div class="image-adjuster-panel mt-3" *ngIf="showImageAdjuster && rawImageSource" style="background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 12px; color: #334155;">📐 Adjust Photo Framing, Zoom & Alignment:</span>
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 2px 8px;" (click)="resetAdjustments()">Center & Reset</button>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                  <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                    Zoom / Scale: <strong>{{ zoomLevel }}%</strong>
+                  </label>
+                  <input type="range" min="100" max="300" step="5" [(ngModel)]="zoomLevel" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+                </div>
+
+                <div>
+                  <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                    Horizontal Position (X): <strong>{{ offsetX }}</strong>
+                  </label>
+                  <input type="range" min="-50" max="50" step="1" [(ngModel)]="offsetX" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+                </div>
+              </div>
+
+              <div style="margin-top: 8px;">
+                <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 2px;">
+                  Vertical Position (Y): <strong>{{ offsetY }}</strong>
+                </label>
+                <input type="range" min="-50" max="50" step="1" [(ngModel)]="offsetY" [ngModelOptions]="{standalone: true}" (input)="onAdjustmentChange()" style="width: 100%; cursor: pointer;" />
+              </div>
+            </div>
+          </div>
+          <small class="text-muted" style="display: block; margin-top: 4px; font-size: 11px;">
+            Upload or paste image, then use Zoom and Position controls to align the face perfectly.
+          </small>
         </div>
 
         <div class="modal-footer mt-4">

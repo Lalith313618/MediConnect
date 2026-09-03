@@ -4,7 +4,7 @@
   <div class="doctor-profile-grid mt-3">
     <!-- Doctor Info Sidebar -->
     <div class="card doc-profile-card">
-      <img [src]="doctor.profileImage" [alt]="getDocName()" class="profile-img" />
+      <img [src]="doctor.profileImage || './doctors.png'" (error)="$any($event.target).src='./doctors.png'" [alt]="getDocName()" class="profile-img" />
       <span class="spec-badge">{{ doctor.specialization }}</span>
       <h2>{{ getDocName() }}</h2>
       <p class="qual">{{ doctor.qualification }}</p>
@@ -16,7 +16,7 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Consultation Fee</span>
-          <span class="meta-val fee">\${{ doctor.consultationFee }}</span>
+          <span class="meta-val fee">₹{{ doctor.consultationFee }}</span>
         </div>
       </div>
 
@@ -85,7 +85,7 @@
         <h4>Booking Summary</h4>
         <p><strong>Doctor:</strong> {{ getDocName() }} ({{ doctor.specialization }})</p>
         <p><strong>Date & Time:</strong> {{ selectedDate }} at {{ selectedTime }}</p>
-        <p><strong>Fee:</strong> \${{ doctor.consultationFee }}</p>
+        <p><strong>Fee:</strong> ₹{{ doctor.consultationFee }}</p>
       </div>
 
       <button
