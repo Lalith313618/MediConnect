@@ -12,7 +12,6 @@ const seedData = async () => {
     await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB for seeding...');
 
-    // Ensure default Admin user exists without clearing existing records
     const adminExists = await User.findOne({ email: 'admin@mediconnect.com' });
     if (!adminExists) {
       await User.create({
@@ -32,7 +31,7 @@ const seedData = async () => {
 
     console.log('Seed check complete. Existing users, doctors, and appointments preserved.');
 
-    
+
     if (require.main === module) {
       process.exit(0);
     }

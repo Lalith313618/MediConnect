@@ -1,5 +1,6 @@
 const Doctor = require('../models/Doctor');
 const User = require('../models/User');
+const Appointment = require('../models/Appointment');
 
 const getDoctors = async (req, res) => {
   try {
@@ -232,7 +233,10 @@ const deleteDoctor = async (req, res) => {
     await User.findByIdAndDelete(doctor.userId);
     await Doctor.findByIdAndDelete(doctor._id);
 
-    res.json({ message: 'Doctor and associated user account removed successfully' });
+    // Delete all appointments linked to this doctor
+    await Appointment.deleteMany({ doctorId: doctor._id });
+
+    res.json({ message: 'Doctor, user account, and all associated appointments removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

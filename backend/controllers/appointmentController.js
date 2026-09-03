@@ -80,7 +80,7 @@ const getAppointments = async (req, res) => {
       query.appointmentDate = date;
     }
 
-    const appointments = await Appointment.find(query)
+    let appointments = await Appointment.find(query)
       .populate('patientId', 'name email phone dateOfBirth gender address')
       .populate({
         path: 'doctorId',
@@ -88,6 +88,8 @@ const getAppointments = async (req, res) => {
       })
       .sort({ appointmentDate: 1, appointmentTime: 1 })
       .lean();
+
+    appointments = appointments.filter((app) => app.patientId && app.doctorId && app.doctorId.userId);
 
     res.json(appointments);
   } catch (error) {

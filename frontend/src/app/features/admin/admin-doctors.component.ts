@@ -258,7 +258,8 @@ export class AdminDoctorsComponent implements OnInit {
     if (confirm('Are you sure you want to remove this doctor and their login account?')) {
       this.doctorService.deleteDoctor(id).subscribe({
         next: () => {
-          this.toastService.success('Doctor removed from system.');
+          this.adminService.clearCache();
+          this.toastService.success('Doctor and associated appointments removed from system.');
           this.loadDoctors();
         },
         error: (err) => this.toastService.error(err.error?.message || 'Delete failed.')

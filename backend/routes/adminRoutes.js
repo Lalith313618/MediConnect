@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getDashboardStats,
   getPatients,
+  deletePatient,
   getAdminDoctors,
   getAdminAppointments
 } = require('../controllers/adminController');
@@ -14,6 +15,7 @@ router.use(authorizeRoles('admin'));
 
 router.get('/dashboard', getDashboardStats);
 router.get('/patients', getPatients);
+router.delete('/patients/:id', deletePatient);
 router.get('/doctors', getAdminDoctors);
 router.get('/appointments', getAdminAppointments);
 

@@ -155,6 +155,12 @@ export class AdminService {
       );
   }
 
+  deletePatient(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/patients/${id}`).pipe(
+      tap(() => this.clearCache())
+    );
+  }
+
   getDoctors(
     forceRefresh = false
   ): Observable<Doctor[]> {

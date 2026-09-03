@@ -1,8 +1,27 @@
 const User = require('../models/User');
 const Doctor = require('../models/Doctor');
 const Appointment = require('../models/Appointment');
+
+// Clean up any orphaned appointments where patient or doctor was deleted
+const cleanOrphanedAppointments = async () => {
+  try {
+    const validUserIds = await User.distinct('_id');
+    const validDoctorIds = await Doctor.distinct('_id');
+
+    await Appointment.deleteMany({
+      $or: [
+        { patientId: { $nin: validUserIds } },
+        { doctorId: { $nin: validDoctorIds } }
+      ]
+    });
+  } catch (error) {
+    console.error('Error cleaning orphaned appointments:', error);
+  }
+};
+
 const getDashboardStats = async (req, res) => {
   try {
+    await cleanOrphanedAppointments();
     const todayStr = new Date().toISOString().split('T')[0];
 
     const [
@@ -59,6 +78,7 @@ const getDashboardStats = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 const getPatients = async (req, res) => {
   try {
     const { search } = req.query;
@@ -75,6 +95,35 @@ const getPatients = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const deletePatient = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const user = await User.findById(patientId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    // Delete doctor profile if user was also a doctor
+    const doctorProfile = await Doctor.findOne({ userId: patientId });
+    if (doctorProfile) {
+      await Appointment.deleteMany({ doctorId: doctorProfile._id });
+      await Doctor.findByIdAndDelete(doctorProfile._id);
+    }
+
+    // Delete all appointments created by this patient
+    await Appointment.deleteMany({ patientId: patientId });
+
+    // Delete User document
+    await User.findByIdAndDelete(patientId);
+
+    res.json({ message: 'Patient account and all associated appointments removed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getAdminDoctors = async (req, res) => {
   try {
     const doctors = await Doctor.find().populate('userId', 'name email phone role address').sort({ createdAt: -1 }).lean();
@@ -83,8 +132,10 @@ const getAdminDoctors = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 const getAdminAppointments = async (req, res) => {
   try {
+    await cleanOrphanedAppointments();
     const { status, date, doctorId, patientId, search } = req.query;
     let query = {};
 
@@ -121,6 +172,7 @@ const getAdminAppointments = async (req, res) => {
 module.exports = {
   getDashboardStats,
   getPatients,
+  deletePatient,
   getAdminDoctors,
   getAdminAppointments
 };
