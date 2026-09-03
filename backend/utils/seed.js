@@ -12,8 +12,8 @@ const seedData = async () => {
     await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB for seeding...');
 
-    const adminExists = await User.findOne({ email: 'admin@mediconnect.com' });
-    if (!adminExists) {
+    let adminUser = await User.findOne({ email: 'admin@mediconnect.com' });
+    if (!adminUser) {
       await User.create({
         name: 'MediConnect Admin',
         email: 'admin@mediconnect.com',
@@ -26,7 +26,10 @@ const seedData = async () => {
       });
       console.log('Default Admin user created (admin@mediconnect.com / Admin@123).');
     } else {
-      console.log('Admin user already exists.');
+      adminUser.password = 'Admin@123';
+      adminUser.role = 'admin';
+      await adminUser.save();
+      console.log('Admin user password successfully reset to Admin@123.');
     }
 
     console.log('Seed check complete. Existing users, doctors, and appointments preserved.');
